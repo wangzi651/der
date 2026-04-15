@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>算个der</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <link href="https://fonts.loli.net/css2?family=Noto+Serif+SC:wght@400;600;700&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #1a1612;
+      --bg-secondary: #2d241d;
+      --bg-gradient: linear-gradient(160deg, #1a1612 0%, #2d241d 50%, #1f1a15 100%);
+      --card-bg: rgba(45, 36, 29, 0.85);
+      --card-border: 1px solid rgba(180, 140, 100, 0.15);
+      --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      --text-primary: #f5ebe0;
+      --text-secondary: #d4c4b0;
+      --text-tertiary: #a89880;
+      --accent: #c9a66b;
+      --accent-glow: rgba(201, 166, 107, 0.4);
+      --input-bg: rgba(30, 24, 18, 0.9);
+      --input-border: 1px solid rgba(180, 140, 100, 0.25);
+      --btn-primary-bg: linear-gradient(135deg, #8b6914 0%, #c9a66b 50%, #8b6914 100%);
+      --btn-primary-hover: linear-gradient(135deg, #a67c1a 0%, #d4b378 50%, #a67c1a 100%);
+      --btn-secondary-bg: rgba(180, 140, 100, 0.15);
+      --btn-secondary-hover: rgba(180, 140, 100, 0.25);
+      --divider: linear-gradient(90deg, transparent, rgba(201, 166, 107, 0.3), transparent);
+      --loading-mask: rgba(26, 22, 18, 0.95);
+    }
+
+    .light-theme {
+      --bg-primary: #f8f4ef;
+      --bg-secondary: #ebe5db;
+      --bg-gradient: linear-gradient(160deg, #f8f4ef 0%, #ebe5db 50%, #f0ebe3 100%);
+      --card-bg: rgba(255, 255, 255, 0.8);
+      --card-border: 1px solid rgba(139, 105, 20, 0.12);
+      --card-shadow: 0 20px 60px rgba(139, 105, 20, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      --text-primary: #2d241d;
+      --text-secondary: #4a3f32;
+      --text-tertiary: #7a6b58;
+      --accent: #8b6914;
+      --accent-glow: rgba(139, 105, 20, 0.3);
+      --input-bg: rgba(255, 255, 255, 0.9);
+      --input-border: 1px solid rgba(139, 105, 20, 0.2);
+      --btn-primary-bg: linear-gradient(135deg, #6b5010 0%, #a67c1a 50%, #6b5010 100%);
+      --btn-primary-hover: linear-gradient(135deg, #8b6914 0%, #c9a66b 50%, #8b6914 100%);
+      --btn-secondary-bg: rgba(139, 105, 20, 0.1);
+      --btn-secondary-hover: rgba(139, 105, 20, 0.18);
+      --divider: linear-gradient(90deg, transparent, rgba(139, 105, 20, 0.25), transparent);
+      --loading-mask: rgba(248, 244, 239, 0.95);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Noto Serif SC", "PingFang SC", "Microsoft YaHei", serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #bgCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .bg-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg-gradient);
+      z-index: -1;
+    }
+
+    .light-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.3;
+      pointer-events: none;
+      z-index: 1;
+      animation: orbFloat 20s ease-in-out infinite;
+    }
+
+    .light-orb:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      top: -100px;
+      right: -100px;
+      animation-delay: 0s;
+    }
+
+    .light-orb:nth-child(2) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(180, 120, 60, 0.25) 0%, transparent 70%);
+      bottom: 20%;
+      left: -50px;
+      animation-delay: -7s;
+    }
+
+    .light-orb:nth-child(3) {
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(200, 160, 100, 0.2) 0%, transparent 70%);
+      top: 50%;
+      right: 10%;
+      animation-delay: -14s;
+    }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(30px, -40px) scale(1.1); }
+      50% { transform: translate(-20px, 20px) scale(0.95); }
+      75% { transform: translate(40px, 30px) scale(1.05); }
+    }
+
+    .main-content {
+      position: relative;
+      z-index: 10;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: var(--card-border);
+      border-radius: 24px;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    }
+
+    .glass-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .main-title {
+      font-family: 'ZCOOL XiaoWei', serif;
+      font-size: clamp(2.5rem, 10vw, 4rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 50%, var(--text-primary) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% center; }
+      50% { background-position: 100% center; }
+    }
+
+    .btn-primary {
+      background: var(--btn-primary-bg);
+      background-size: 200% 100%;
+      border: none;
+      border-radius: 16px;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn-primary:hover {
+      background-position: 100% 0;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(201, 166, 107, 0.3);
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: var(--btn-secondary-bg);
+      border: 1px solid rgba(180, 140, 100, 0.2);
+      border-radius: 12px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-secondary::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(201, 166, 107, 0.1);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.4s ease, height 0.4s ease;
+    }
+
+    .btn-secondary:hover {
+      background: var(--btn-secondary-hover);
+      border-color: rgba(180, 140, 100, 0.4);
+    }
+
+    .btn-secondary:hover::after {
+      width: 200%;
+      height: 200%;
+    }
+
+    .input-field {
+      background: var(--input-bg);
+      border: var(--input-border);
+      border-radius: 16px;
+      color: var(--text-primary);
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-glow);
+    }
+
+    .input-field::placeholder {
+      color: var(--text-tertiary);
+    }
+
+    .divider-line {
+      height: 1px;
+      background: var(--divider);
+      margin: 1rem 0;
+    }
+
+    .gua-symbol-display {
+      font-size: clamp(3rem, 12vw, 5rem);
+      color: var(--accent);
+      text-shadow: 0 0 40px var(--accent-glow);
+      line-height: 1;
+      transition: all 0.5s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes rotateGua {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+
+    .animate-in {
+      animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      opacity: 0;
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--loading-mask);
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .loading-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .loading-gua {
+      font-size: 4rem;
+      color: var(--accent);
+      animation: rotateGua 2s linear infinite, pulse 1s ease-in-out infinite;
+    }
+
+    .progress-track {
+      width: 200px;
+      height: 4px;
+      background: rgba(201, 166, 107, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 1.5rem;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), #e8d5a8);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+
+    .result-card {
+      margin-top: 1.5rem;
+    }
+
+    .result-card.animate-in {
+      animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .advice-item {
+      padding: 0.75rem 1rem;
+      margin: 0.5rem 0;
+      background: rgba(201, 166, 107, 0.08);
+      border-radius: 12px;
+      border-left: 3px solid var(--accent);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      animation: fadeInUp 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .conclusion-text {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      padding: 1rem;
+      background: linear-gradient(135deg, rgba(201, 166, 107, 0.1) 0%, rgba(201, 166, 107, 0.05) 100%);
+      border-radius: 16px;
+      border: 1px solid rgba(201, 166, 107, 0.15);
+    }
+
+    .insight-block {
+      padding: 1rem;
+      margin: 0.75rem 0;
+      background: rgba(201, 166, 107, 0.06);
+      border-radius: 12px;
+      border-left: 3px solid var(--accent);
+    }
+
+    .insight-block h4 {
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .insight-block p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .number-input {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      -moz-appearance: textfield;
+    }
+
+    .number-input::-webkit-outer-spin-button,
+    .number-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .theme-toggle {
+      position: relative;
+      width: 50px;
+      height: 28px;
+      background: var(--btn-secondary-bg);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(180, 140, 100, 0.2);
+    }
+
+    .theme-toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .light-theme .theme-toggle::after {
+      transform: translateX(22px);
+    }
+
+    @media (max-width: 480px) {
+      .main-content {
+        padding: 1rem 0.75rem 3rem;
+      }
+      
+      .glass-card {
+        padding: 1.25rem;
+        border-radius: 20px;
+      }
+
+      .btn-primary {
+        padding: 1rem;
+        font-size: 1rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .action-buttons button {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-gradient"></div>
+  <canvas id="bgCanvas"></canvas>
+  <div class="light-orb"></div>
+  <div class="light-orb"></div>
+  <div class="light-orb"></div>
+
+  <div class="main-content max-w-lg mx-auto">
+    <header class="text-center mb-8 animate-in">
+      <div class="flex justify-end mb-4">
+        <div class="theme-toggle" id="themeToggle" role="button" aria-label="切换主题" tabindex="0"></div>
+      </div>
+      <h1 class="main-title mb-3">算个der</h1>
+      <p class="text-base" style="color: var(--text-tertiary);">小事一卦，大了不算</p>
+    </header>
+
+    <div class="glass-card p-6 mb-6 animate-in delay-1">
+      <div class="mb-5">
+        <label class="block text-sm mb-2" style="color: var(--text-tertiary);">写下你的问题</label>
+        <textarea 
+          id="question" 
+          class="input-field w-full p-4 min-h-[100px] resize-none text-base"
+          placeholder="比如：今年有桃花吗？能不能候补到票？事业能升职吗？"
+        ></textarea>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="block text-sm mb-2" style="color: var(--text-tertiary);">数一 (1~8)</label>
+          <input 
+            id="num1" 
+            type="number" 
+            min="1" 
+            max="8" 
+            class="input-field number-input w-full p-3"
+            value="6"
+          >
+        </div>
+        <div>
+          <label class="block text-sm mb-2" style="color: var(--text-tertiary);">数二 (1~8)</label>
+          <input 
+            id="num2" 
+            type="number" 
+            min="1" 
+            max="8" 
+            class="input-field number-input w-full p-3"
+            value="5"
+          >
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <button onclick="randomNum()" class="btn-secondary py-3 text-sm flex items-center justify-center gap-2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="8" height="8" rx="1"/>
+            <rect x="14" y="2" width="8" height="8" rx="1"/>
+            <rect x="2" y="14" width="8" height="8" rx="1"/>
+            <rect x="14" y="14" width="8" height="8" rx="1"/>
+            <circle cx="6" cy="6" r="1" fill="currentColor"/>
+            <circle cx="18" cy="6" r="1" fill="currentColor"/>
+            <circle cx="6" cy="18" r="1" fill="currentColor"/>
+            <circle cx="18" cy="18" r="1" fill="currentColor"/>
+          </svg>
+          随机
+        </button>
+        <button onclick="clearInput()" class="btn-secondary py-3 text-sm flex items-center justify-center gap-2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/>
+          </svg>
+          清空
+        </button>
+      </div>
+
+      <button onclick="derOnce()" class="btn-primary w-full py-4 text-lg">
+        der 一下
+      </button>
+    </div>
+
+    <div id="resultArea" class="hidden"></div>
+  </div>
+
+  <div id="loadingMask" class="loading-overlay">
+    <div class="loading-gua">☵</div>
+    <p class="mt-4 text-lg" style="color: var(--text-secondary);">正在推演卦象...</p>
+    <div class="progress-track">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+    <p id="progressText" class="mt-3 text-sm" style="color: var(--text-tertiary);">解析卦象结构...</p>
+  </div>
+
+  <script>
+    // ===================== 背景粒子系统 =====================
+    const canvas = document.getElementById('bgCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animationId = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    function createParticles() {
+      particles = [];
+      const count = Math.min(50, Math.floor(window.innerWidth / 25));
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: Math.max(1, Math.random() * 3 + 0.5),
+          speedX: (Math.random() - 0.5) * 0.3,
+          speedY: (Math.random() - 0.5) * 0.3,
+          opacity: Math.random() * 0.4 + 0.1,
+          hue: Math.random() * 30 + 30
+        });
+      }
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const isLight = document.body.classList.contains('light-theme');
+      
+      particles.forEach(p => {
+        p.x += p.speedX;
+        p.y += p.speedY;
+        
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+        
+        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, Math.max(1, p.size * 3));
+        const baseColor = isLight ? `hsla(${p.hue}, 60%, 35%` : `hsla(${p.hue}, 70%, 55%`;
+        gradient.addColorStop(0, `${baseColor}, ${p.opacity})`);
+        gradient.addColorStop(1, `${baseColor}, 0)`);
+        
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, Math.max(1, p.size * 3), 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      });
+      
+      particles.forEach((p1, i) => {
+        particles.slice(i + 1).forEach(p2 => {
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            const lineOpacity = (1 - dist / 120) * 0.15 * Math.min(p1.opacity, p2.opacity);
+            ctx.strokeStyle = isLight 
+              ? `rgba(139, 105, 20, ${lineOpacity})` 
+              : `rgba(201, 166, 107, ${lineOpacity})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        });
+      });
+      
+      animationId = requestAnimationFrame(drawParticles);
+    }
+
+    resizeCanvas();
+    createParticles();
+    drawParticles();
+
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      createParticles();
+    });
+
+    // ===================== 核心数据层 =====================
+    const GUA_BASE = {
+      0: {name: "乾", sym: "☰", ele: "金", nature: "刚健进取"},
+      1: {name: "坤", sym: "☷", ele: "土", nature: "包容承载"},
+      2: {name: "震", sym: "☳", ele: "木", nature: "动而有力"},
+      3: {name: "巽", sym: "☴", ele: "木", nature: "顺而入"},
+      4: {name: "坎", sym: "☵", ele: "水", nature: "险而深"},
+      5: {name: "离", sym: "☲", ele: "火", nature: "明而散"},
+      6: {name: "艮", sym: "☶", ele: "土", nature: "止而静"},
+      7: {name: "兑", sym: "☱", ele: "金", nature: "悦而说"}
+    };
+
+    const SIXTY_FOUR_GUA = [
+      ["乾为天","坤为地","雷天大壮","风天小畜","水天需","火天大有","山天大畜","泽天夬"],
+      ["天地否","坤为地","雷地豫","风地观","水地比","火地晋","山地剥","泽地萃"],
+      ["天雷无妄","地雷复","震为雷","风雷益","水雷屯","火雷噬嗑","山雷颐","泽雷随"],
+      ["天风姤","地风升","雷风恒","巽为风","水风井","火风鼎","山风蛊","泽风大过"],
+      ["天水讼","地水师","雷水解","风涣","坎为水","火水未济","山水蒙","泽水困"],
+      ["天火同人","地火明夷","雷火丰","风火家人","水火既济","离为火","山火贲","泽火革"],
+      ["天山遁","地山谦","雷山小过","风山渐","水山蹇","火山旅","艮为山","泽山咸"],
+      ["天泽履","地泽临","雷泽归妹","风泽中孚","水泽节","火泽睽","山泽损","兑为泽"]
+    ];
+
+    // 【卦象本质库】- 每卦一句核心逻辑
+    const GUA_ESSENCE = {
+      "乾为天": { essence: "主动进取", pattern: "刚健不息，事在人为", keyPoint: "关键是主动出击，不能等" },
+      "坤为地": { essence: "顺势承载", pattern: "厚德载物，静待时机", keyPoint: "关键是耐心等待，不能急" },
+      "雷天大壮": { essence: "力量过盛", pattern: "刚强有余，需守规矩", keyPoint: "关键是收敛锋芒，不能狂" },
+      "风天小畜": { essence: "力量积蓄", pattern: "蓄势待发，时机未到", keyPoint: "关键是继续积累，不能急进" },
+      "水天需": { essence: "等待时机", pattern: "云上于天，耐心等候", keyPoint: "关键是静待时机，不能躁动" },
+      "火天大有": { essence: "收获丰盛", pattern: "如日中天，需守成", keyPoint: "关键是稳住成果，不能贪" },
+      "山天大畜": { essence: "大量积蓄", pattern: "积蓄力量，厚积薄发", keyPoint: "关键是持续积累，不能急用" },
+      "泽天夬": { essence: "决断时刻", pattern: "当断则断，过则生悔", keyPoint: "关键是果断决策，不能犹豫" },
+      "天地否": { essence: "阴阳不交", pattern: "内外隔绝，事遇阻滞", keyPoint: "关键是蛰伏隐忍，不能强为" },
+      "雷地豫": { essence: "愉悦顺遂", pattern: "顺势而为，可成大事", keyPoint: "关键是抓住机会，不能错过" },
+      "风地观": { essence: "观察审视", pattern: "静观其变，不宜妄动", keyPoint: "关键是看清楚，不能盲目" },
+      "水地比": { essence: "亲附团结", pattern: "众人相助，事易成", keyPoint: "关键是抱团，不能孤立" },
+      "火地晋": { essence: "晋升上进", pattern: "如日初升，前程光明", keyPoint: "关键是主动争取，不能等" },
+      "山地剥": { essence: "剥落损耗", pattern: "阳气消散，需守本", keyPoint: "关键是守住底线，不能折腾" },
+      "泽地萃": { essence: "聚集汇聚", pattern: "众望所归，可成事", keyPoint: "关键是聚合资源，不能分散" },
+      "天雷无妄": { essence: "不妄为", pattern: "真诚无欺，事顺成", keyPoint: "关键是守正，不能投机" },
+      "地雷复": { essence: "一阳来复", pattern: "否极泰来，希望初现", keyPoint: "关键是抓住转折，不能错过" },
+      "震为雷": { essence: "震动警醒", pattern: "突发变动，需戒慎", keyPoint: "关键是临变不惊，不能慌" },
+      "风雷益": { essence: "受益增益", pattern: "得助得利，向好发展", keyPoint: "关键是善用资源，不能浪费" },
+      "水雷屯": { essence: "初创艰难", pattern: "万事开头难，需坚持", keyPoint: "关键是熬过初期，不能放弃" },
+      "火雷噬嗑": { essence: "咬合整治", pattern: "有问题需解决，不能拖", keyPoint: "关键是果断处理，不能姑息" },
+      "山雷颐": { essence: "颐养修身", pattern: "修养身心，积蓄能量", keyPoint: "关键是自我提升，不能懈怠" },
+      "泽雷随": { essence: "顺势追随", pattern: "随势而行，不逆流", keyPoint: "关键是顺应时势，不能硬来" },
+      "天风姤": { essence: "不期而遇", pattern: "缘分际会，需把握", keyPoint: "关键是抓住机会，不能错过" },
+      "地风升": { essence: "稳步上升", pattern: "如木生长，循序渐进", keyPoint: "关键是持续向上，不能停" },
+      "雷风恒": { essence: "恒久不变", pattern: "持之以恒，事终成", keyPoint: "关键是坚持，不能动摇" },
+      "巽为风": { essence: "顺从谦逊", pattern: "随风而入，以柔克刚", keyPoint: "关键是灵活，不能固执" },
+      "水风井": { essence: "安守本份", pattern: "深挖一口井，不换地方", keyPoint: "关键是专注，不能分散" },
+      "火风鼎": { essence: "革故鼎新", pattern: "旧去新来，转型期", keyPoint: "关键是敢于改变，不能守旧" },
+      "山风蛊": { essence: "整治弊乱", pattern: "有问题需整改，不能拖", keyPoint: "关键是解决问题，不能回避" },
+      "泽风大过": { essence: "过度失衡", pattern: "负担过重，需减负", keyPoint: "关键是适度，不能逞强" },
+      "天水讼": { essence: "争讼冲突", pattern: "矛盾激化，需和解", keyPoint: "关键是避讼，不能硬刚" },
+      "地水师": { essence: "统御调度", pattern: "需组织力量，不能单干", keyPoint: "关键是团队协作，不能独斗" },
+      "雷水解": { essence: "解除困难", pattern: "困境将解，曙光在望", keyPoint: "关键是坚持一下，不能放弃" },
+      "风涣": { essence: "涣散离散", pattern: "人心不聚，需凝聚", keyPoint: "关键是团结，不能分裂" },
+      "坎为水": { essence: "险难重重", pattern: "一波三折，需谨慎", keyPoint: "关键是稳住心态，不能慌" },
+      "火水未济": { essence: "事未完成", pattern: "关键条件缺失，卡在最后一步", keyPoint: "关键是补齐条件，不能急躁" },
+      "山水蒙": { essence: "蒙昧初学", pattern: "需学习摸索，不能冒进", keyPoint: "关键是虚心学习，不能自大" },
+      "泽水困": { essence: "穷困艰难", pattern: "处境困难，需忍耐", keyPoint: "关键是守志不屈，不能放弃" },
+      "天火同人": { essence: "和同共济", pattern: "志同道合，团结协作", keyPoint: "关键是合作，不能单干" },
+      "地火明夷": { essence: "光明受损", pattern: "时运不济，需韬光养晦", keyPoint: "关键是低调，不能出头" },
+      "雷火丰": { essence: "丰盛极盛", pattern: "鼎盛时期，需守成", keyPoint: "关键是稳住，不能贪多" },
+      "风火家人": { essence: "家庭和睦", pattern: "内外和谐，根基稳固", keyPoint: "关键是维护关系，不能忽视" },
+      "水火既济": { essence: "事已完成", pattern: "功成圆满，需防变", keyPoint: "关键是守住成果，不能松懈" },
+      "离为火": { essence: "光明昌盛", pattern: "如日中天，前途光明", keyPoint: "关键是保持热度，不能冷却" },
+      "山火贲": { essence: "文饰美化", pattern: "外在光鲜，需充实内在", keyPoint: "关键是表里如一，不能虚浮" },
+      "泽火革": { essence: "变革革新", pattern: "时机成熟，需改变", keyPoint: "关键是敢于变革，不能守旧" },
+      "天山遁": { essence: "退避隐遁", pattern: "时机不利，需撤退", keyPoint: "关键是及时止损，不能恋战" },
+      "地山谦": { essence: "谦逊有礼", pattern: "低调行事，终有回报", keyPoint: "关键是谦虚，不能自满" },
+      "雷山小过": { essence: "小有过失", pattern: "细节出问题，需修正", keyPoint: "关键是纠错，不能放任" },
+      "风山渐": { essence: "循序渐进", pattern: "步步为营，稳步推进", keyPoint: "关键是耐心，不能急进" },
+      "水山蹇": { essence: "艰难险阻", pattern: "前路受阻，需迂回", keyPoint: "关键是找新路，不能硬闯" },
+      "火山旅": { essence: "羁旅在外", pattern: "不稳定期，需安身", keyPoint: "关键是立足当下，不能漂泊" },
+      "艮为山": { essence: "静止停止", pattern: "该停就停，不能强进", keyPoint: "关键是知止，不能冒进" },
+      "泽山咸": { essence: "感应相通", pattern: "心意相通，顺势成", keyPoint: "关键是真诚，不能虚伪" },
+      "天泽履": { essence: "谨慎行事", pattern: "如履薄冰，需小心", keyPoint: "关键是谨慎，不能大意" },
+      "地泽临": { essence: "亲临督导", pattern: "需亲自介入，不能放任", keyPoint: "关键是亲力亲为，不能甩手" },
+      "雷泽归妹": { essence: "归宿定位", pattern: "需找到位置，不能漂泊", keyPoint: "关键是安定下来，不能犹豫" },
+      "风泽中孚": { essence: "诚信守中", pattern: "以诚待人，事顺成", keyPoint: "关键是诚信，不能欺瞒" },
+      "水泽节": { essence: "节制有度", pattern: "适度而行，不能过度", keyPoint: "关键是把握分寸，不能极端" },
+      "火泽睽": { essence: "乖离相悖", pattern: "意见不合，需求同存异", keyPoint: "关键是沟通，不能对抗" },
+      "山泽损": { essence: "损减克制", pattern: "需舍才有得，不能贪", keyPoint: "关键是舍得，不能计较" },
+      "兑为泽": { essence: "喜悦和悦", pattern: "心情愉悦，事顺成", keyPoint: "关键是心态好，不能焦虑" }
+    };
+
+    // 【动爻阶段模型】- 爻位对应事情真实阶段
+    const YAO_STAGE = {
+      1: { stage: "萌芽期", meaning: "事情刚开始，一切未定", action: "奠基" },
+      2: { stage: "成形期", meaning: "有了初步眉目，但还需努力", action: "培育" },
+      3: { stage: "波折期", meaning: "遇到关键困难，是分水岭", action: "突破" },
+      4: { stage: "转折期", meaning: "局面开始变化，出现新可能", action: "调整" },
+      5: { stage: "关键期", meaning: "接近结果，临门一脚", action: "冲刺" },
+      6: { stage: "终局期", meaning: "事情已到尽头，需收尾", action: "收束" }
+    };
+
+    // 五行生克
+    const RELATION_MAP = {
+      "金": {生: "水", 克: "木"},
+      "木": {生: "火", 克: "土"},
+      "水": {生: "木", 克: "火"},
+      "火": {生: "土", 克: "金"},
+      "土": {生: "金", 克: "水"}
+    };
+
+    // 场景类型
+    const QUEST_SCENARIO = [
+      {type: "love", reg: /桃花|感情|恋爱|复合|对象|脱单|喜欢|表白|相亲/, desc: "感情桃花类"},
+      {type: "ticket", reg: /票|候补|抢票|预约|出行|车票|机票/, desc: "票务出行类"},
+      {type: "career", reg: /工作|事业|面试|升职|加薪|跳槽|创业|项目/, desc: "事业工作类"},
+      {type: "money", reg: /财运|钱|工资|投资|收益|破财|赚钱|理财/, desc: "财运财富类"},
+      {type: "study", reg: /考试|学习|考研|上岸|成绩|学业|考证/, desc: "学业考试类"},
+      {type: "health", reg: /健康|生病|体检|养生|睡眠|饮食/, desc: "健康养生类"},
+      {type: "general", reg: /.*/, desc: "通用杂事类"}
+    ];
+
+    // ===================== 主题切换 =====================
+    const themeToggle = document.getElementById('themeToggle');
+    let isLightTheme = false;
+
+    themeToggle.addEventListener('click', toggleTheme);
+    themeToggle.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleTheme();
+      }
+    });
+
+    function toggleTheme() {
+      isLightTheme = !isLightTheme;
+      document.body.classList.toggle('light-theme', isLightTheme);
+    }
+
+    // ===================== 工具函数 =====================
+    function randomNum() {
+      document.getElementById('num1').value = Math.floor(Math.random() * 8) + 1;
+      document.getElementById('num2').value = Math.floor(Math.random() * 8) + 1;
+    }
+
+    function clearInput() {
+      document.getElementById('question').value = '';
+      document.getElementById('num1').value = '';
+      document.getElementById('num2').value = '';
+      document.getElementById('resultArea').classList.add('hidden');
+      document.getElementById('resultArea').innerHTML = '';
+    }
+
+    // ===================== 卦象计算 =====================
+    function calcGua(num1, num2) {
+      const n1 = Math.max(1, Math.min(8, parseInt(num1) || 1));
+      const n2 = Math.max(1, Math.min(8, parseInt(num2) || 1));
+      
+      const shangIdx = n1 - 1;
+      const xiaIdx = n2 - 1;
+      const total = n1 + n2;
+      const moveYao = total % 6 === 0 ? 6 : total % 6;
+      
+      const yaoReverse = [1, 0, 3, 2, 5, 4, 7, 6];
+      let shangBianIdx = shangIdx;
+      let xiaBianIdx = xiaIdx;
+      
+      if (moveYao <= 3) {
+        xiaBianIdx = yaoReverse[xiaIdx];
+      } else {
+        shangBianIdx = yaoReverse[shangIdx];
+      }
+      
+      const benGuaName = SIXTY_FOUR_GUA[shangIdx][xiaIdx];
+      const bianGuaName = SIXTY_FOUR_GUA[shangBianIdx][xiaBianIdx];
+      
+      return {
+        shang: GUA_BASE[shangIdx],
+        xia: GUA_BASE[xiaIdx],
+        moveYao: moveYao,
+        benGuaName: benGuaName,
+        bianGuaName: bianGuaName,
+        benSym: GUA_BASE[shangIdx].sym + GUA_BASE[xiaIdx].sym,
+        bianSym: GUA_BASE[shangBianIdx].sym + GUA_BASE[xiaBianIdx].sym,
+        ti: GUA_BASE[xiaIdx],
+        yong: GUA_BASE[shangIdx]
+      };
+    }
+
+    // 【体用关系推演】
+    function getTiYongAnalysis(tiEle, yongEle) {
+      if (tiEle === yongEle) {
+        return {
+          relation: "比和",
+          power: "内外同频",
+          dynamic: "你和环境节奏一致",
+          advantage: "你有主动权",
+          risk: "容易陷入舒适区",
+          strategy: "顺势而为，保持节奏"
+        };
+      } else if (RELATION_MAP[yongEle].生 === tiEle) {
+        return {
+          relation: "用生体",
+          power: "外部助你",
+          dynamic: "环境在推你一把",
+          advantage: "有外力加持",
+          risk: "容易依赖外力",
+          strategy: "抓住机会，主动借力"
+        };
+      } else if (RELATION_MAP[tiEle].生 === yongEle) {
+        return {
+          relation: "体生用",
+          power: "你在付出",
+          dynamic: "你在消耗自己成就外部",
+          advantage: "付出会有回报",
+          risk: "过度消耗心力",
+          strategy: "适度付出，设定底线"
+        };
+      } else if (RELATION_MAP[tiEle].克 === yongEle) {
+        return {
+          relation: "体克用",
+          power: "你主控局",
+          dynamic: "你能掌控局面",
+          advantage: "有主导权",
+          risk: "容易强势过头",
+          strategy: "主动出击，以柔克刚"
+        };
+      } else {
+        return {
+          relation: "用克体",
+          power: "环境压制你",
+          dynamic: "外部条件不配合",
+          advantage: "能认清现实",
+          risk: "容易被动挨打",
+          strategy: "以守为攻，避其锋芒"
+        };
+      }
+    }
+
+    // 【核心矛盾生成器】
+    function generateCoreConflict(guaName, yaoStage, tiYongAnalysis) {
+      const essence = GUA_ESSENCE[guaName] || { essence: "待定", pattern: "需结合实际情况判断", keyPoint: "关键是审时度势" };
+      const stage = YAO_STAGE[yaoStage];
+      
+      // 矛盾逻辑链
+      const conflictLogic = {
+        "用克体": {
+          "萌芽期": `事情刚起步就遇到阻力，${essence.keyPoint}`,
+          "成形期": `有了眉目但外部不配合，${essence.keyPoint}`,
+          "波折期": `关键困难期遇外部打压，${essence.keyPoint}`,
+          "转折期": `局面变化但环境不利，${essence.keyPoint}`,
+          "关键期": `临门一脚却缺关键条件，${essence.keyPoint}`,
+          "终局期": `收尾阶段遇阻滞，${essence.keyPoint}`
+        },
+        "体克用": {
+          "萌芽期": `刚起步就有主动权，${essence.keyPoint}`,
+          "成形期": `局面朝你期望的方向发展，${essence.keyPoint}`,
+          "波折期": `困难期你依然掌控局势，${essence.keyPoint}`,
+          "转折期": `变化中你占据主动，${essence.keyPoint}`,
+          "关键期": `最后关头你能左右结果，${essence.keyPoint}`,
+          "终局期": `收尾在你掌控中，${essence.keyPoint}`
+        },
+        "用生体": {
+          "萌芽期": `刚起步就有贵人相助，${essence.keyPoint}`,
+          "成形期": `外部环境助推你发展，${essence.keyPoint}`,
+          "波折期": `困难时有人帮你，${essence.keyPoint}`,
+          "转折期": `变化中遇到机会，${essence.keyPoint}`,
+          "关键期": `临门一脚有人推你，${essence.keyPoint}`,
+          "终局期": `收尾阶段很顺利，${essence.keyPoint}`
+        },
+        "体生用": {
+          "萌芽期": `起步就需你付出，${essence.keyPoint}`,
+          "成形期": `需要你持续投入，${essence.keyPoint}`,
+          "波折期": `困难期需你咬牙坚持，${essence.keyPoint}`,
+          "转折期": `变化中需要你调整策略，${essence.keyPoint}`,
+          "关键期": `最后关头需你发力，${essence.keyPoint}`,
+          "终局期": `收尾阶段还需你收心，${essence.keyPoint}`
+        },
+        "比和": {
+          "萌芽期": `起步平稳，内外一致，${essence.keyPoint}`,
+          "成形期": `发展顺利，节奏协调，${essence.keyPoint}`,
+          "波折期": `困难期但能稳住阵脚，${essence.keyPoint}`,
+          "转折期": `变化中保持稳定，${essence.keyPoint}`,
+          "关键期": `关键时刻心态平和，${essence.keyPoint}`,
+          "终局期": `收尾阶段水到渠成，${essence.keyPoint}`
+        }
+      };
+
+      const conflict = conflictLogic[tiYongAnalysis.relation]?.[stage.stage] || essence.keyPoint;
+      
+      return {
+        essence: essence.essence,
+        pattern: essence.pattern,
+        stage: stage.stage,
+        stageMeaning: stage.meaning,
+        stageAction: stage.action,
+        conflict: conflict,
+        keyPoint: essence.keyPoint
+      };
+    }
+
+    // 【场景推演路径】- 不同场景的推演逻辑
+    function sceneDeduction(sceneType, conflict, tiYongAnalysis, guaName) {
+      const templates = {
+        love: {
+          "用克体": {
+            situation: "不是没有机会，而是外部条件不配合",
+            realCause: "对方节奏、现实阻力、或某个关键点没对上",
+            likelyResult: "如果强推，容易差一步错过",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心卡点：${conflict.conflict}`,
+              `建议动作：不要硬推，先观察对方态度变化，等窗口期`,
+              `时机判断：对方主动找你时才是真正机会`
+            ]
+          },
+          "体克用": {
+            situation: "你有主动权，但对方态度被动",
+            realCause: "不是对方不喜欢，而是你推进节奏太快",
+            likelyResult: "主动出击能成，但不能逼太紧",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心优势：${conflict.conflict}`,
+              `建议动作：适度主动，给对方空间，不要步步紧逼`,
+              `时机判断：对方给出明确信号后再加速`
+            ]
+          },
+          "用生体": {
+            situation: "对方对你有好感，或者有人帮你牵线",
+            realCause: "外部环境在助推这段关系",
+            likelyResult: "自然发展就能成",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心助力：${conflict.conflict}`,
+              `建议动作：顺其自然，接受别人的好意和帮助`,
+              `时机判断：不需要刻意追求，时机成熟自然水到渠成`
+            ]
+          },
+          "体生用": {
+            situation: "需要你主动付出，对方比较被动",
+            realCause: "这段关系需要你来主导推进",
+            likelyResult: "付出会有回报，但不能无限付出",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心代价：${conflict.conflict}`,
+              `建议动作：主动但要有底线，不要一味付出不求回报`,
+              `时机判断：对方回应积极后再继续投入`
+            ]
+          },
+          "比和": {
+            situation: "关系平稳发展，没有大波澜",
+            realCause: "双方节奏一致，顺其自然",
+            likelyResult: "按当前节奏发展即可",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心状态：${conflict.conflict}`,
+              `建议动作：保持当前节奏，不要刻意加速或减速`,
+              `时机判断：自然发展，不需要刻意选择时机`
+            ]
+          }
+        },
+        ticket: {
+          "用克体": {
+            situation: "票务系统或渠道不配合",
+            realCause: "当前时机、渠道或方法不对",
+            likelyResult: "直接候补成功率低",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心障碍：${conflict.conflict}`,
+              `建议动作：换渠道、换时间、换方法，不要死磕一个方案`,
+              `备选方案：关注临开车前捡漏，或考虑中转`
+            ]
+          },
+          "体克用": {
+            situation: "你能通过努力掌控结果",
+            realCause: "主动操作能提高成功率",
+            likelyResult: "多平台操作能抢到",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心优势：${conflict.conflict}`,
+              `建议动作：多平台同步刷，用加速包，设置提醒`,
+              `关键时机：放票后15分钟内是黄金期`
+            ]
+          },
+          "用生体": {
+            situation: "系统或渠道利好你",
+            realCause: "外部条件推你一把",
+            likelyResult: "正常操作就能成功",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心助力：${conflict.conflict}`,
+              `建议动作：按正常流程操作即可，不需要过度焦虑`,
+              `关键时机：候补后耐心等待，大概率能成功`
+            ]
+          },
+          "体生用": {
+            situation: "需要你投入时间精力刷票",
+            realCause: "成功需要付出代价",
+            likelyResult: "持续操作有机会",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心代价：${conflict.conflict}`,
+              `建议动作：定时刷新、多渠道监控，付出会有回报`,
+              `关键时机：退票高峰期多关注`
+            ]
+          },
+          "比和": {
+            situation: "系统稳定，按流程走",
+            realCause: "没有特殊利好或利空",
+            likelyResult: "正常排队候补",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心状态：${conflict.conflict}`,
+              `建议动作：按部就班，不需要焦虑`,
+              `关键时机：耐心等待即可`
+            ]
+          }
+        },
+        career: {
+          "用克体": {
+            situation: "领导、市场或团队不配合",
+            realCause: "外部环境压制你的发展",
+            likelyResult: "强出头会碰壁",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心阻碍：${conflict.conflict}`,
+              `建议动作：以守为主，做好本职工作，等待时机`,
+              `关键策略：蛰伏蓄力，不要正面冲突`
+            ]
+          },
+          "体克用": {
+            situation: "你有能力掌控局面",
+            realCause: "主动争取能获得机会",
+            likelyResult: "展现自己就能被看到",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心优势：${conflict.conflict}`,
+              `建议动作：主动汇报工作成果，争取核心项目`,
+              `关键策略：让领导看到你的价值`
+            ]
+          },
+          "用生体": {
+            situation: "有贵人或机会主动上门",
+            realCause: "外部环境助推你上升",
+            likelyResult: "顺势而为就能成",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心助力：${conflict.conflict}`,
+              `建议动作：抓住机会，接受贵人帮助`,
+              `关键策略：借力上升，不要错过`
+            ]
+          },
+          "体生用": {
+            situation: "需要你主动付出努力",
+            realCause: "机会要靠争取",
+            likelyResult: "付出会有回报",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心代价：${conflict.conflict}`,
+              `建议动作：加班、学习、拓展人脉，投入会有产出`,
+              `关键策略：先付出后收获`
+            ]
+          },
+          "比和": {
+            situation: "工作稳定，发展平稳",
+            realCause: "内外协调，没有大风浪",
+            likelyResult: "按部就班发展",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心状态：${conflict.conflict}`,
+              `建议动作：保持当前节奏，稳步提升`,
+              `关键策略：不急不躁，稳中求进`
+            ]
+          }
+        },
+        general: {
+          "用克体": {
+            situation: "外部条件不配合",
+            realCause: "时机或方法不对",
+            likelyResult: "强为会受阻",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心矛盾：${conflict.conflict}`,
+              `建议动作：调整策略，不要硬碰硬`,
+              `关键策略：等待时机，避其锋芒`
+            ]
+          },
+          "体克用": {
+            situation: "你能主导事情走向",
+            realCause: "主动出击能掌控结果",
+            likelyResult: "主动能成",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心优势：${conflict.conflict}`,
+              `建议动作：主动推进，把控细节`,
+              `关键策略：以主动换结果`
+            ]
+          },
+          "用生体": {
+            situation: "外部环境利好你",
+            realCause: "有天时地利人和",
+            likelyResult: "顺其自然能成",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心助力：${conflict.conflict}`,
+              `建议动作：抓住机会，借力成事`,
+              `关键策略：顺势而为`
+            ]
+          },
+          "体生用": {
+            situation: "需要你主动付出",
+            realCause: "成功需要代价",
+            likelyResult: "付出有回报",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心代价：${conflict.conflict}`,
+              `建议动作：主动投入，设定底线`,
+              `关键策略：适度付出，不求全得`
+            ]
+          },
+          "比和": {
+            situation: "事情平稳发展",
+            realCause: "内外协调一致",
+            likelyResult: "水到渠成",
+            advice: [
+              `当前阶段：${conflict.stage}，${conflict.stageMeaning}`,
+              `核心状态：${conflict.conflict}`,
+              `建议动作：保持节奏，顺其自然`,
+              `关键策略：稳中求进`
+            ]
+          }
+        }
+      };
+
+      // 获取对应场景和关系的模板
+      const sceneTemplates = templates[sceneType] || templates.general;
+      const result = sceneTemplates[tiYongAnalysis.relation] || sceneTemplates["比和"];
+      
+      return result;
+    }
+
+    // 获取场景类型
+    function getQuestType(questText) {
+      for (let type of QUEST_SCENARIO) {
+        if (type.reg.test(questText)) return type;
+      }
+      return QUEST_SCENARIO[QUEST_SCENARIO.length - 1];
+    }
+
+    // 【主推演函数】- 七步推演链
+    function performDeduction(gua, questType) {
+      // 第一步：定性 - 卦象本质
+      const essence = GUA_ESSENCE[gua.benGuaName] || { essence: "待定", pattern: "需结合实际情况判断", keyPoint: "关键是审时度势" };
+      
+      // 第二步：定位 - 动爻阶段
+      const yaoStage = YAO_STAGE[gua.moveYao];
+      
+      // 第三步：力量 - 体用分析
+      const tiYongAnalysis = getTiYongAnalysis(gua.ti.ele, gua.yong.ele);
+      
+      // 第四步：矛盾 - 核心冲突生成
+      const conflict = generateCoreConflict(gua.benGuaName, gua.moveYao, tiYongAnalysis);
+      
+      // 第五步：场景翻译
+      const sceneResult = sceneDeduction(questType.type, conflict, tiYongAnalysis, gua.benGuaName);
+      
+      // 第六步：行为结果
+      const behaviorResult = {
+        currentStage: `${yaoStage.stage}（${yaoStage.meaning}）`,
+        coreConflict: conflict.conflict,
+        yourPosition: tiYongAnalysis.power,
+        environmentPosition: tiYongAnalysis.dynamic,
+        keyAction: yaoStage.action
+      };
+      
+      // 第七步：建议
+      const finalAdvice = sceneResult.advice;
+      
+      return {
+        essence,
+        yaoStage,
+        tiYongAnalysis,
+        conflict,
+        sceneResult,
+        behaviorResult,
+        finalAdvice,
+        shareText: generateShareText(gua, behaviorResult, sceneResult)
+      };
+    }
+
+    // 生成分享文本
+    function generateShareText(gua, behaviorResult, sceneResult) {
+      return `【算个der - 卦象推演】
+
+问：${document.getElementById("question").value}
+
+本卦：${gua.benGuaName} ${gua.benSym}
+阶段：${behaviorResult.currentStage}
+体用：${behaviorResult.yourPosition}
+
+局面判断：${sceneResult.situation}
+根本原因：${sceneResult.realCause}
+发展预期：${sceneResult.likelyResult}
+
+ ${behaviorResult.coreConflict}`;
+    }
+
+    // ===================== 渲染结果 =====================
+    function renderResult(gua, deduction) {
+      const resultArea = document.getElementById('resultArea');
+      resultArea.innerHTML = '';
+      resultArea.classList.remove('hidden');
+
+      // 卡片1：卦象与阶段
+      const card1 = document.createElement('div');
+      card1.className = 'glass-card p-6 result-card animate-in';
+      card1.innerHTML = `
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="text-xl font-semibold mb-1">${gua.benGuaName}</h3>
+            <p class="text-sm" style="color: var(--text-tertiary);">变卦：${gua.bianGuaName}</p>
+          </div>
+          <div class="gua-symbol-display">${gua.benSym}</div>
+        </div>
+        <div class="insight-block">
+          <h4>卦象本质</h4>
+          <p>${deduction.essence.essence} — ${deduction.essence.pattern}</p>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <div class="insight-block">
+            <h4>当前阶段</h4>
+            <p>${deduction.yaoStage.stage}</p>
+            <p class="text-xs mt-1" style="color: var(--text-tertiary);">${deduction.yaoStage.meaning}</p>
+          </div>
+          <div class="insight-block">
+            <h4>体用关系</h4>
+            <p>${deduction.tiYongAnalysis.relation}</p>
+            <p class="text-xs mt-1" style="color: var(--text-tertiary);">${deduction.tiYongAnalysis.power}</p>
+          </div>
+        </div>
+      `;
+      resultArea.appendChild(card1);
+
+      // 卡片2：核心推演
+      setTimeout(() => {
+        const card2 = document.createElement('div');
+        card2.className = 'glass-card p-6 result-card animate-in';
+        card2.innerHTML = `
+          <h3 class="text-lg font-semibold mb-4">推演分析</h3>
+          
+          <div class="insight-block">
+            <h4>局面判断</h4>
+            <p>${deduction.sceneResult.situation}</p>
+          </div>
+          
+          <div class="insight-block">
+            <h4>根本原因</h4>
+            <p>${deduction.sceneResult.realCause}</p>
+          </div>
+          
+          <div class="insight-block">
+            <h4>发展预期</h4>
+            <p>${deduction.sceneResult.likelyResult}</p>
+          </div>
+        `;
+        resultArea.appendChild(card2);
+      }, 200);
+
+      // 卡片3：具体建议
+      setTimeout(() => {
+        const card3 = document.createElement('div');
+        card3.className = 'glass-card p-6 result-card animate-in';
+        card3.innerHTML = `
+          <h3 class="text-lg font-semibold mb-4">具体建议</h3>
+          <div id="adviceList"></div>
+          <div class="action-buttons flex gap-3 mt-6">
+            <button onclick="copyResult()" class="btn-secondary flex-1 py-3 text-sm flex items-center justify-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+              </svg>
+              复制
+            </button>
+            <button onclick="shareResult()" class="btn-secondary flex-1 py-3 text-sm flex items-center justify-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"/>
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+              </svg>
+              分享
+            </button>
+            <button onclick="generateImage()" class="btn-secondary flex-1 py-3 text-sm flex items-center justify-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
+              图片
+            </button>
+          </div>
+        `;
+        resultArea.appendChild(card3);
+
+        // 逐条渲染建议
+        const adviceList = document.getElementById('adviceList');
+        deduction.finalAdvice.forEach((advice, i) => {
+          setTimeout(() => {
+            const item = document.createElement('div');
+            item.className = 'advice-item';
+            item.textContent = advice;
+            adviceList.appendChild(item);
+          }, i * 150);
+        });
+      }, 400);
+    }
+
+    // ===================== 分享功能 =====================
+    let currentShareText = '';
+
+    function copyResult() {
+      navigator.clipboard.writeText(currentShareText).then(() => {
+        showToast('已复制到剪贴板');
+      }).catch(() => {
+        showToast('复制失败，请手动复制');
+      });
+    }
+
+    function shareResult() {
+      if (navigator.share) {
+        navigator.share({
+          title: '算个der - 卦象推演',
+          text: currentShareText
+        }).catch(() => copyResult());
+      } else {
+        copyResult();
+      }
+    }
+
+    function generateImage() {
+      const resultArea = document.getElementById('resultArea');
+      html2canvas(resultArea, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: isLightTheme ? '#f8f4ef' : '#1a1612'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = `算个der_${Date.now()}.png`;
+        link.click();
+        showToast('图片已保存');
+      });
+    }
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.textContent = message;
+      toast.style.cssText = `
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--card-bg);
+        color: var(--text-primary);
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        z-index: 1000;
+        animation: fadeInUp 0.3s ease;
+        backdrop-filter: blur(10px);
+      `;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2000);
+    }
+
+    // ===================== 加载动画 =====================
+    function showLoading() {
+      const mask = document.getElementById('loadingMask');
+      const bar = document.getElementById('progressBar');
+      const text = document.getElementById('progressText');
+      
+      mask.classList.add('active');
+      bar.style.width = '0%';
+      
+      const texts = ['解析卦象结构...', '推演体用关系...', '定位当前阶段...', '生成核心矛盾...', '翻译场景含义...'];
+      let progress = 0;
+      let textIdx = 0;
+      
+      const timer = setInterval(() => {
+        progress += 5;
+        bar.style.width = progress + '%';
+        
+        if (progress % 20 === 0 && textIdx < texts.length - 1) {
+          textIdx++;
+          text.textContent = texts[textIdx];
+        }
+        
+        if (progress >= 100) clearInterval(timer);
+      }, 30);
+      
+      return timer;
+    }
+
+    function hideLoading(timer) {
+      clearInterval(timer);
+      const mask = document.getElementById('loadingMask');
+      setTimeout(() => mask.classList.remove('active'), 200);
+    }
+
+    // ===================== 主函数 =====================
+    function derOnce() {
+      const questText = document.getElementById('question').value.trim();
+      const num1 = document.getElementById('num1').value;
+      const num2 = document.getElementById('num2').value;
+
+      if (!questText) {
+        showToast('先写下你想der啥事儿');
+        return;
+      }
+      if (!num1 || !num2 || isNaN(num1) || isNaN(num2) || num1 < 1 || num1 > 8 || num2 < 1 || num2 > 8) {
+        showToast('数字得填1~8之间');
+        return;
+      }
+
+      const timer = showLoading();
+      
+      setTimeout(() => {
+        const gua = calcGua(num1, num2);
+        const questType = getQuestType(questText);
+        const deduction = performDeduction(gua, questType);
+        currentShareText = deduction.shareText;
+        
+        hideLoading(timer);
+        renderResult(gua, deduction);
+      }, 1800);
+    }
+  </script>
+</body>
+</html>
