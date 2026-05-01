@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -135,6 +135,10 @@
       --loading-mask: rgba(26, 22, 18, 0.95);
       --error: #d04444;
       --success: #3a8;
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 22px;
+      --radius-pill: 999px;
     }
 
     /* ========== 页面样式 ========== */
@@ -254,13 +258,14 @@
     .btn-primary {
       background: linear-gradient(180deg, #d4a84b 0%, #b8892e 100%);
       border: none;
-      border-radius: 12px;
+      min-height: 46px;
+      border-radius: var(--radius-pill);
       box-shadow:
         0 6px 18px rgba(201, 166, 107, 0.35),
         0 2px 4px rgba(0,0,0,0.2),
         inset 0 1px 0 rgba(255,246,220,0.4);
       color: #fff;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.25s ease;
     }
@@ -471,7 +476,7 @@
       position: fixed;
       inset: 0;
       background: var(--loading-mask);
-      display: flex;
+      display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -482,6 +487,7 @@
     }
 
     .loading-overlay.active {
+      display: flex;
       opacity: 1;
       pointer-events: all;
     }
@@ -586,9 +592,10 @@
 
     .result-card {
       margin-top: 1.5rem;
+      margin-bottom: 1rem;
       background: rgba(26, 22, 16, 0.5);
       border: 1px solid rgba(201, 166, 107, 0.15);
-      border-radius: 14px;
+      border-radius: var(--radius-lg);
       box-shadow: 0 0 12px rgba(201, 166, 107, 0.03), 0 2px 8px rgba(0,0,0,0.15);
       padding: 1.25rem;
     }
@@ -706,7 +713,7 @@
       
       .glass-card {
         padding: 1.25rem;
-        border-radius: 20px;
+        border-radius: var(--radius-lg);
       }
 
       .btn-primary {
@@ -848,16 +855,33 @@
       gap: 4px;
       background: none;
       border: none;
-      color: var(--text-tertiary);
       font-size: 0.7rem;
       cursor: pointer;
-      transition: color 0.2s;
       padding: 8px 16px;
-      border-radius: 12px;
       min-width: 64px;
+      color: var(--text-tertiary);
+      transition: color 0.18s ease, transform 0.18s ease;
     }
     .nav-item.active { color: var(--accent); }
-    .nav-icon { font-size: 1.2rem; display: block; }
+    .nav-item.active .nav-icon { filter: drop-shadow(0 0 6px rgba(201,166,107,0.22)); }
+    .nav-item:active { transform: translateY(1px); }
+    .nav-icon {
+      width: 1.35rem;
+      height: 1.35rem;
+      display: grid;
+      place-items: center;
+      margin-bottom: 0.18rem;
+      color: currentColor;
+    }
+    .nav-icon svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
 
     /* 图鉴网格 */
     .gua-collection-grid {
@@ -885,9 +909,36 @@
       color: var(--accent);
       margin-bottom: 4px;
     }
+    .collection-cell-name {
+      display: block;
+      margin-top: 0.15rem;
+      font-size: 0.6rem;
+      line-height: 1.25;
+      font-weight: normal;
+      letter-spacing: -0.02em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      word-break: break-all;
+    }
     .collection-card-date {
       font-size: 0.6rem;
       color: var(--text-tertiary);
+    }
+
+    .collection-card .gua-name,
+    .gua-card .gua-name,
+    .hexagram-name,
+    .gua-name {
+      font-size: 0.82rem;
+      line-height: 1.25;
+      min-height: 1.1rem;
+      white-space: nowrap;
+      overflow: visible;
+      text-overflow: clip;
+      letter-spacing: 0.02em;
     }
 
     .panel-header { padding: 1rem 0.5rem 0.5rem; }
@@ -1203,6 +1254,12 @@
       background: rgba(201, 166, 107, 0.06);
     }
 
+    .action-btn,
+    .review-btn {
+      min-height: 38px;
+      border-radius: var(--radius-sm);
+    }
+
     .result-ops {
       display: flex;
       gap: 0.5rem;
@@ -1352,8 +1409,92 @@
       align-items: center;
       gap: 0.25rem;
     }
+    .result-page-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin: 0.25rem 0 1rem;
+    }
+    .result-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      border: 1px solid rgba(201,166,107,0.16);
+      background: rgba(201,166,107,0.06);
+      color: var(--text-secondary);
+      border-radius: 999px;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.78rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .result-back-btn:hover {
+      color: var(--accent);
+      border-color: rgba(201,166,107,0.35);
+      background: rgba(201,166,107,0.10);
+    }
+    .result-back-btn svg {
+      width: 1rem;
+      height: 1rem;
+      stroke: currentColor;
+    }
+    .result-backtop-btn {
+      position: fixed;
+      right: 1rem;
+      bottom: calc(84px + env(safe-area-inset-bottom, 0));
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      border: 1px solid rgba(201,166,107,0.18);
+      background: rgba(31, 26, 20, 0.88);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      z-index: 60;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.28);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+    }
+    .result-backtop-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .result-backtop-btn:active {
+      transform: translateY(1px);
+    }
+    .first-screen-card { padding: 1.25rem 1rem; }
+    .fs-field { margin-bottom: 0.75rem; }
+    .fs-field:last-of-type { margin-bottom: 0; }
+    .fs-label { font-size: 0.7rem; font-weight: 500; margin-bottom: 0.2rem; letter-spacing: 0.02em; }
+    .fs-value { font-size: 0.88rem; line-height: 1.7; color: var(--text-secondary); }
+    .deep-entry-btn {
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      width: 100%; padding: 0.7rem 1rem; margin-bottom: 0.75rem;
+      background: rgba(201,166,107,0.04); border: 1px solid rgba(201,166,107,0.12);
+      border-radius: 10px; color: var(--accent); font-size: 0.82rem; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .deep-entry-btn:hover { background: rgba(201,166,107,0.08); border-color: rgba(201,166,107,0.25); }
+    .result-bottom-bar {
+      display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;
+      padding: 0.75rem 0; margin-top: 0.5rem;
+    }
+    .result-bottom-bar .action-btn { flex: 1; min-width: 0; text-align: center; }
+    .result-review-section { text-align: center; padding: 0.5rem 0 1.5rem; }
+    .review-btn {
+      display: inline-block; padding: 0.35rem 0.9rem; margin: 0 0.3rem;
+      background: rgba(201,166,107,0.04); border: 1px solid rgba(201,166,107,0.1);
+      border-radius: 6px; color: var(--text-tertiary); font-size: 0.72rem;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .review-btn:hover { color: var(--accent); border-color: rgba(201,166,107,0.3); background: rgba(201,166,107,0.06); }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
   <div class="bg-gradient"></div>
@@ -1364,12 +1505,12 @@
 
   <div class="main-content max-w-lg mx-auto">
     <div id="tab-divine" class="tab-panel active">
-    <header class="text-center mb-8 animate-in">
+    <header id="divineHeader" class="text-center mb-8 animate-in">
       <h1 class="main-title mb-3">算个der</h1>
-      <p class="text-base" style="color: var(--text-tertiary);">小事一卦，大了不算</p>
+      <p class="text-base" style="color: var(--text-tertiary);">小事一卦</p>
     </header>
 
-    <main class="p-6 mb-6 animate-in delay-1" role="main" aria-label="占卜输入区" style="border-radius:24px;">
+    <main id="divinationEntry" class="p-6 mb-6 animate-in delay-1" role="main" aria-label="占卜输入区" style="border-radius:24px;">
       <form id="divinationForm" onsubmit="event.preventDefault(); derOnce();" novalidate>
         <fieldset class="mb-5 border-0 p-0">
           <legend class="sr-only">占卜问题与数字</legend>
@@ -1378,28 +1519,11 @@
             <div id="todayRecommend" style="text-align:center;margin-bottom:0.5rem;">
               <span style="font-size:0.6rem;color:var(--text-tertiary);">今日宜问：<span id="todayRecText" style="color:var(--accent);cursor:pointer;" onclick="applyTodayRec()"></span></span>
             </div>
-            <div class="flex justify-end items-center mb-2">
-              <div class="flex items-center gap-1 flex-nowrap overflow-x-auto">
-                <button type="button" onclick="setScenario('感情')" class="scenario-btn">感情</button>
-                <span style="color: var(--text-tertiary); opacity: 0.3; font-size: 0.6rem;">|</span>
-                <button type="button" onclick="setScenario('事业')" class="scenario-btn">事业</button>
-                <span style="color: var(--text-tertiary); opacity: 0.3; font-size: 0.6rem;">|</span>
-                <button type="button" onclick="setScenario('财运')" class="scenario-btn">财运</button>
-                <span style="color: var(--text-tertiary); opacity: 0.3; font-size: 0.6rem;">|</span>
-                <button type="button" onclick="setScenario('学业')" class="scenario-btn">学业</button>
-                <span style="color: var(--text-tertiary); opacity: 0.3; font-size: 0.6rem;">|</span>
-                <button type="button" onclick="setScenario('健康')" class="scenario-btn">健康</button>
-                <span style="color: var(--text-tertiary); opacity: 0.3; font-size: 0.6rem;">|</span>
-                <button type="button" onclick="setScenario('失物')" class="scenario-btn">失物</button>
-                <span style="color: var(--text-tertiary); opacity: 0.3; font-size: 0.6rem;">|</span>
-                <button type="button" onclick="setScenario('通用')" class="scenario-btn">通用</button>
-              </div>
-            </div>
             <textarea
               id="question"
               name="question"
               class="input-field w-full p-4 min-h-[100px] resize-none text-base"
-              placeholder="写下你的问题..."
+              placeholder="比如：他最近对我到底是什么态度？"
               aria-required="true"
               autocomplete="off"
             ></textarea>
@@ -1411,10 +1535,10 @@
               <input
                 id="num1"
                 name="num1"
-                type="number"
+                type="text"
                 inputmode="numeric"
-                min="1"
-                max="8"
+                pattern="[1-8]*"
+                maxlength="1"
                 class="input-field number-input w-full p-3"
                 value="6"
                 aria-describedby="num1-hint"
@@ -1426,10 +1550,10 @@
               <input
                 id="num2"
                 name="num2"
-                type="number"
+                type="text"
                 inputmode="numeric"
-                min="1"
-                max="8"
+                pattern="[1-8]*"
+                maxlength="1"
                 class="input-field number-input w-full p-3"
                 value="5"
                 aria-describedby="num2-hint"
@@ -1462,14 +1586,12 @@
         </div>
 
         <button type="submit" class="btn-primary w-full py-4 text-lg" aria-label="开始推演">
-          der 一下
+          der一下
         </button>
 
-        <div id="modeToggle" style="display:flex;justify-content:center;gap:0.5rem;margin-top:0.6rem;">
-          <button id="modeNormal" onclick="setMode('normal')" style="font-size:0.65rem;padding:0.25rem 0.75rem;border-radius:6px;border:1px solid rgba(201,166,107,0.25);background:rgba(201,166,107,0.1);color:var(--accent);cursor:pointer;">🔮 常规</button>
-          <button id="modeDushe" onclick="setMode('dushe')" style="font-size:0.65rem;padding:0.25rem 0.75rem;border-radius:6px;border:1px solid rgba(180,80,60,0.15);background:transparent;color:var(--text-tertiary);cursor:pointer;">🗣️ 毒舌</button>
-        </div>
+
       </form>
+
     </main>
 
     <section id="resultArea" class="hidden" aria-live="polite" aria-atomic="true" role="region" aria-label="推演结果"></section>
@@ -1488,7 +1610,7 @@
     <!-- ==================== 图鉴面板 ==================== -->
     <div id="tab-collection" class="tab-panel">
       <div class="panel-header">
-        <h2 class="panel-title">📜 图鉴</h2>
+        <h2 class="panel-title">图鉴</h2>
       </div>
       <div class="panel-body" id="collectionBody">
         <!-- 由JS渲染 -->
@@ -1519,17 +1641,15 @@
         <div class="pt-4 border-t border-[rgba(180,140,100,0.15)]">
           <h3 class="text-lg font-semibold mb-2" style="color: var(--text-primary);">关于「算个der」</h3>
           <p class="text-sm leading-7" style="color: var(--text-secondary);">
-            小事一卦，大了不算。<br><br>
-            「算个der」是一个轻量的梅花易数占卜小工具，旨在为你在犹豫不决时提供决策参考。
-            它仅供娱乐，别太较真，生活的决定权始终在你手里。
+            小事一卦，大了不算。拿来整理思路，别拿来替你生活。
           </p>
-          <p class="text-xs mt-4" style="color: var(--text-tertiary);">Version 1.0 · 娱乐为主，切勿沉迷</p>
+          <p class="text-xs mt-4" style="color: var(--text-tertiary);">Version 1.0</p>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="loadingMask" class="loading-overlay" role="status" aria-live="polite" aria-label="推演加载中">
+  <div id="loadingMask" class="loading-overlay" role="status" aria-live="polite" aria-label="推演加载中" aria-hidden="true" hidden>
     <div class="loading-shell">
       <div class="loading-gua-wrap" aria-hidden="true">
         <div class="loading-ring"></div>
@@ -1658,13 +1778,13 @@
     // ===================== 核心数据层 =====================
     const GUA_BASE = {
       0: {name: "乾", sym: "☰", ele: "金", nature: "刚健进取", yao: [1, 1, 1]},
-      1: {name: "坤", sym: "☷", ele: "土", nature: "包容承载", yao: [0, 0, 0]},
-      2: {name: "震", sym: "☳", ele: "木", nature: "动而有力", yao: [0, 0, 1]},
-      3: {name: "巽", sym: "☴", ele: "木", nature: "顺而入", yao: [1, 1, 0]},
-      4: {name: "坎", sym: "☵", ele: "水", nature: "险而深", yao: [0, 1, 0]},
-      5: {name: "离", sym: "☲", ele: "火", nature: "明而散", yao: [1, 0, 1]},
-      6: {name: "艮", sym: "☶", ele: "土", nature: "止而静", yao: [1, 0, 0]},
-      7: {name: "兑", sym: "☱", ele: "金", nature: "悦而说", yao: [0, 1, 1]}
+      1: {name: "兑", sym: "☱", ele: "金", nature: "悦而说", yao: [1, 1, 0]},
+      2: {name: "离", sym: "☲", ele: "火", nature: "明而散", yao: [1, 0, 1]},
+      3: {name: "震", sym: "☳", ele: "木", nature: "动而有力", yao: [1, 0, 0]},
+      4: {name: "巽", sym: "☴", ele: "木", nature: "顺而入", yao: [0, 1, 1]},
+      5: {name: "坎", sym: "☵", ele: "水", nature: "险而深", yao: [0, 1, 0]},
+      6: {name: "艮", sym: "☶", ele: "土", nature: "止而静", yao: [0, 0, 1]},
+      7: {name: "坤", sym: "☷", ele: "土", nature: "包容承载", yao: [0, 0, 0]}
     };
 
     const SIXTY_FOUR_GUA = [
@@ -1677,6 +1797,12 @@
       ["天山遁","泽山咸","火山旅","雷山小过","风山渐","水山蹇","艮为山","地山谦"],
       ["天地否","泽地萃","火地晋","雷地豫","风地观","水地比","山地剥","坤为地"]
     ];
+
+    function getCanonicalGuaNames() {
+      return [...new Set(SIXTY_FOUR_GUA.flat())];
+    }
+
+    const CANONICAL_GUA_NAMES = getCanonicalGuaNames();
 
     // 【卦象本质库】- 每卦一句核心逻辑
     const GUA_ESSENCE = {
@@ -1829,6 +1955,14 @@
       general: {
         label: "通用占卜",
         introHint: "这次判断重点看的是：事情本身的态势和你的发力方向是否匹配。"
+      },
+      social_invite: {
+        label: "社交邀约",
+        introHint: "这次判断重点看的是：对方近期是否会主动联系，以及这段社交关系当前的走向。"
+      },
+      interpersonal: {
+        label: "人际关系",
+        introHint: "这次判断重点看的是：你和对方之间的互动模式是否健康，以及该怎么调整。"
       }
     };
 
@@ -2639,7 +2773,7 @@
         riskWarning: "在否塞期继续纠缠，只会把仅存的好感彻底磨灭。",
         guaSummary: "否主闭塞，感情到了瓶颈期，以退为进往往比横冲直撞高明。"
       },
-      "地地复": {
+      "地雷复": {
         keywords: ["复联", "回暖", "重启"],
         relationshipState: "这段关系正在经历复联或回暖，之前断裂的联系重新接上，但还不稳定。",
         misjudgment: "容易把回暖当成完全修复，错把短期回流当真正复合。",
@@ -3370,8 +3504,86 @@
         releaseCondition: "当你们能把言欢变成行动上的合拍，这段快乐的关系就有了一份稳定的契约。",
         riskWarning: "聊得来不代表合适。你最容易踩的坑是：因为和TA聊天太舒服了，就误以为这是灵魂伴侣。真正决定你们能不能走下去的，不是聊天时的火花，是沉默时的默契。",
         guaSummary: "兑主喜悦，感情里的沟通是门艺术，聊得来是契机，处得来才是结局。"
+      },
+      "地天泰": {
+        keywords: ["通泰", "顺畅", "流动"],
+        relationshipState: "泰卦有上下相通、阻隔渐开的意味。在感情里，它代表关系开始出现顺流，彼此之间的防备感下降，沟通和靠近的机会增加。",
+        misjudgment: "容易把表面的顺畅当成关系已经稳固，忽略了顺境中也可能潜藏变化。",
+        boundary: "顺势推进，但不要过早索取承诺，更不要因为顺就加大投入赌一把。",
+        action: "保持稳定出现，制造轻松交流，让关系在低压力中自然升温。",
+        baseConclusion: "你们之间不是没机会，而是需要一个自然变顺的过程。",
+        trend: "有机会升温",
+        releaseCondition: "当双方都愿意主动靠近、不再设防时，才是关系真正通泰的标志。",
+        riskWarning: "泰极也可能转否，越是顺的时候，越不能过度消耗对方的舒适感。",
+        guaSummary: "泰主通顺，感情里顺势推进比硬推更有效，但顺境中也要保持清醒。"
       }
     };
+
+    function createFallbackGuaContent(guaName) {
+      return {
+        title: guaName || "未知卦",
+        summary: "此卦已完成排盘，但详细内容库尚未完全补齐。建议以体用关系、动爻位置、本卦与变卦趋势综合判断。",
+        feeling: "当前信息处在需要进一步观察和验证的阶段，不宜只凭单点信号做决定。",
+        advice: "先稳住节奏，观察对方真实行动，再判断是否推进。",
+        risk: "避免因为一时情绪，把尚未确认的信号解读得过满。",
+        action: "保留余地，减少试探，等待更明确的反馈。",
+        keywords: ["待定"],
+        relationshipState: "此卦已完成排盘，但详细内容库尚未完全补齐。建议以体用关系、动爻位置、本卦与变卦趋势综合判断。",
+        misjudgment: "容易因为缺少具体解读而自行脑补，把不确定的信息当结论用。",
+        boundary: "在内容未补齐前，不宜仅凭卦名做重大判断。",
+        action: "关注体用关系和动爻位置这两个最核心的信号，它们不受内容库影响。",
+        baseConclusion: "卦象已定，等待更完整的解读。",
+        trend: "需等触发条件",
+        releaseCondition: "当信息更充分时，再做最终判断。",
+        riskWarning: "在信息不足时贸然行动，容易误判方向。",
+        guaSummary: (guaName || "未知") + "：卦象已出，核心判断以体用关系为准。"
+      };
+    }
+
+    function getGuaContent(guaName) {
+      if (!guaName) {
+        return createFallbackGuaContent("未知卦");
+      }
+      var content = GUA_CONTENT_MAP[guaName];
+      if (content) {
+        return content;
+      }
+      console.warn("[卦象内容缺失，已启用兜底]", guaName);
+      return createFallbackGuaContent(guaName);
+    }
+
+    function validateGuaContentMap() {
+      var canonical = CANONICAL_GUA_NAMES;
+      var contentKeys = Object.keys(GUA_CONTENT_MAP || {});
+      var missing = canonical.filter(function(name) { return contentKeys.indexOf(name) === -1; });
+      var extra = contentKeys.filter(function(name) { return canonical.indexOf(name) === -1; });
+      var duplicatedCanonical = canonical.filter(function(name, index) { return canonical.indexOf(name) !== index; });
+
+      var report = {
+        totalCanonical: canonical.length,
+        totalContentKeys: contentKeys.length,
+        missing: missing,
+        extra: extra,
+        duplicatedCanonical: duplicatedCanonical
+      };
+
+      if (missing.length || extra.length || duplicatedCanonical.length) {
+        console.warn("[GUA_CONTENT_MAP 自检未通过]", report);
+      } else {
+        console.info("[GUA_CONTENT_MAP 自检通过] 64卦内容 key 已全部对齐");
+      }
+
+      return report;
+    }
+
+    function runStartupDiagnostics() {
+      var contentReport = validateGuaContentMap();
+      window.__diagnostics = {
+        contentReport: contentReport,
+        checkedAt: new Date().toISOString()
+      };
+      return window.__diagnostics;
+    }
 
     // 裁决句库：64卦 × 场景的一句话判断，带立场，可截图
     const VERDICT_DB = {
@@ -3853,7 +4065,7 @@
           "5-6": "回暖已经比较明显了，但要看这个回暖是不是稳定。"
         }
       },
-      "水火未济": {
+      "火水未济": {
         defaultLine: "这段关系还没到可以定性的时候，需要继续观察。",
         tiYongRules: {
           "比和": "各方都在变化，方向还不明确。",
@@ -5467,8 +5679,8 @@
     if (VERDICT_DB["地泽临"]) VERDICT_DB["地泽临"].lost = "在你最近亲自整理过的那堆东西里，你是最后一个碰它的人。";
     // 天泽履
     if (VERDICT_DB["天泽履"]) VERDICT_DB["天泽履"].lost = "在你最小心的地方——你越怕丢，越可能把它放在一个自以为安全的位置然后忘了。";
-    // 地地复
-    if (VERDICT_DB["地地复"]) VERDICT_DB["地地复"].lost = "东西还在，只是被挪到了你不常去的角落。";
+    // 地雷复
+    if (VERDICT_DB["地雷复"]) VERDICT_DB["地雷复"].lost = "东西还在，只是被挪到了你不常去的角落。";
     // 雷地豫
     if (VERDICT_DB["雷地豫"]) VERDICT_DB["雷地豫"].lost = "在你最放松的地方——可能是沙发上、床上或你常躺着的区域。";
     // 风地观
@@ -5708,7 +5920,9 @@
     function getScenarioPrefix(scenarioKey) {
       if (scenarioKey === "love" || scenarioKey === "love_general" || scenarioKey === "love_ambiguous" || scenarioKey === "love_reconcile") return "love";
       if (scenarioKey === "career") return "career";
-      if (scenarioKey === "money") return "career";
+      if (scenarioKey === "money") return "money";
+      if (scenarioKey === "social_invite") return "social_invite";
+      if (scenarioKey === "interpersonal") return "interpersonal";
       if (scenarioKey === "study") return "study";
       return "generic";
     }
@@ -5783,6 +5997,155 @@
       return map[moveYao] || "";
     }
 
+    function getInterpersonalArchetype(tiYongType, moveYao, bianGuaName) {
+      var yaoN = Number(moveYao) || 1;
+      if (tiYongType === "用克体") {
+        return {
+          type: "关系降温型",
+          summary: "这段互动正在变轻，继续追问反而会让你更被动。",
+          position: "你更容易受对方节奏影响，主动权不在你手里。",
+          strategy: "暂停主动投入，保留体面，等对方出现明显回暖信号再动。"
+        };
+      }
+      if (tiYongType === "体生用") {
+        return {
+          type: "主动不足型",
+          summary: "这段关系不是断了，而是暂时没有足够动力往前走。",
+          position: "你更主动、更投入，容易消耗自己。",
+          strategy: "不要等，但也不用大动作——轻量试探，看对方接不接。"
+        };
+      }
+      if (tiYongType === "体克用") {
+        return {
+          type: "关系可修型",
+          summary: "问题不在有没有缘分，而在中间有一层误会或不顺，需要先把气氛放松。",
+          position: "你想掌控关系走向，但对方可能不完全舒服。",
+          strategy: "先修复氛围，不急着逼答案——关系松了，后续才好推进。"
+        };
+      }
+      if (tiYongType === "用生体" && yaoN <= 3) {
+        return {
+          type: "关系可修型",
+          summary: "对方对你仍有一定善意或回应空间，关键在于怎么用。",
+          position: "对方的善意不是无限的，趁有人拉你，主动一步。",
+          strategy: "对方给了台阶就下，不要反复试探、反复确认。"
+        };
+      }
+      if (tiYongType === "用生体") {
+        return {
+          type: "礼貌维持型",
+          summary: "对方还愿意维持基本互动，但没有明显把关系往深处推。",
+          position: "有回应但不推进，对方的态度更偏维持。",
+          strategy: "降低期待，看行为连续性——单次回应不算信号，连续三次才算。"
+        };
+      }
+      return {
+        type: "礼貌维持型",
+        summary: "双方状态接近，关系可维持但推进慢。",
+        position: "你们目前的互动频率和深度都处在一个不温不火的阶段。",
+        strategy: "不用急着推进，也不用刻意疏远——保持节奏，等契机出现。"
+      };
+    }
+
+    function buildScenarioDecisionText(decisionLevel, scenarioKey, trigger, tiYongType, benGuaName, bianGuaName) {
+      var isMoney = scenarioKey === "money";
+      var isLove = scenarioKey === "love" || scenarioKey === "love_general" || scenarioKey === "love_ambiguous" || scenarioKey === "love_reconcile";
+      var isCareer = scenarioKey === "career";
+      var isStudy = scenarioKey === "study";
+      var isSocial = scenarioKey === "social_invite";
+      var isInterpersonal = scenarioKey === "interpersonal";
+
+      if (decisionLevel === "fail") {
+        if (isMoney) return {
+          coreJudgement: "不宜新增投入，先守住已有成果。",
+          bullets: ["这不是完全没财运，而是不适合继续加码。", "新增投入容易遇到卡点，越急越容易消耗。", trigger],
+          situation: "当前财务环境对你并不完全配合，守成比扩张更稳。"
+        };
+        if (isLove) return {
+          coreJudgement: "很难成，不建议继续投入。",
+          bullets: ["这段关系在结构上对你不利，不是努力就能解决。", "你越投入，消耗越明显，但对方未必承接。", trigger],
+          situation: "当前局势是对方或外部条件压制你，而不是你推动不够。"
+        };
+        if (isCareer) return {
+          coreJudgement: "推进阻力较大，不宜硬冲。",
+          bullets: ["当前外部环境并不完全支持你。", "继续硬推可能投入很大，但反馈有限。", trigger],
+          situation: "这件事更适合先保留余地，等待条件成熟。"
+        };
+        if (isStudy) return {
+          coreJudgement: "压力偏大，不能靠硬熬解决。",
+          bullets: ["当前难点不是努力不够，而是方法需要调整。", "继续无效重复会加重消耗。", trigger],
+          situation: "先调整复习策略，比单纯增加时间更重要。"
+        };
+        if (isSocial) return {
+          coreJudgement: "主动邀约的概率偏低，不建议强求。",
+          bullets: ["对方目前没有表现出强烈的主动意愿。", "这不代表关系不好，只是当前不是最佳时机。", trigger],
+          situation: "先把这次放一放，不追也不躲，等对方的信号更明确。"
+        };
+        if (isInterpersonal) return {
+          coreJudgement: "关系偏冷，目前不适合主动修复。",
+          bullets: ["对方的互动意愿不高，暂时看不到明显的回暖信号。", "越急着推进，越容易让对方有压力。", trigger],
+          situation: "先给对方空间，不要急着下结论，等时间给出更多信号。"
+        };
+        return {
+          coreJudgement: "阻力较大，不建议继续硬推。",
+          bullets: ["这件事在结构上对你不利，不是努力就能解决。", "越急着推进，消耗越明显。", trigger],
+          situation: "当前局势更适合收缩、观察和调整。"
+        };
+      }
+
+      if (decisionLevel === "success") {
+        if (isMoney) return {
+          coreJudgement: "财运有成，重点在守。",
+          bullets: ["已有成果比新增机会更值得珍惜。", "顺势守住现金流，比冒险扩张更稳。", trigger],
+          situation: "这不是没有财，而是财气已成，需要避免贪多。"
+        };
+        if (isLove) return {
+          coreJudgement: "能成，但有前提。",
+          bullets: ["这段关系整体方向是对的，但不能急着要结果。", "顺着已有节奏走，比强行推进更容易成。", trigger],
+          situation: "关系在往正确方向走，但节奏不能被你打乱。"
+        };
+        if (isSocial) return {
+          coreJudgement: "对方可能会主动联系，信号偏正。",
+          bullets: ["对方的行为信号显示有主动靠近的意愿。", "但一次主动不等于持续在意，看后续保持更重要。", trigger],
+          situation: "机会不错，但不要过度解读一次回应。"
+        };
+        if (isInterpersonal) return {
+          coreJudgement: "关系有改善空间，可以主动一步。",
+          bullets: ["对方的互动模式在往好的方向走。", "你主动释放善意，对方大概率会接住。", trigger],
+          situation: "现在是修复或推进关系的好时机。"
+        };
+        return {
+          coreJudgement: "有机会成，但要顺势推进。",
+          bullets: ["事情整体方向是对的，但不是立刻见效的类型。", "你不需要额外加力，顺着已有节奏走更容易成。", trigger],
+          situation: "当前局势在往正确方向走，但节奏不能被打乱。"
+        };
+      }
+
+      if (isMoney) return {
+        coreJudgement: "有机会，但会消耗精力。",
+        bullets: ["财运不是完全没有，但需要你持续管理。", "收益和风险同时存在，不能只看好处。", trigger],
+        situation: "这件事能做，但必须控制投入比例。"
+      };
+      return {
+        coreJudgement: "能成，但你会比较累。",
+        bullets: ["事情不是不行，但需要你持续推动。", "目前的进展依赖你，而不是自然发展。", trigger],
+        situation: "局势在推进，但你的投入已经开始领先于它本身。"
+      };
+    }
+
+    function adaptTrendByScenario(trend, scenarioKey) {
+      if (scenarioKey !== "money") return trend;
+      const map = {
+        "更适合观察": "先守后动",
+        "可推进但需控量": "小步试探",
+        "短期波动较大": "控制仓位",
+        "不宜强推": "不宜加码",
+        "继续观察": "先稳现金流",
+        "关系升温": "现金流改善"
+      };
+      return map[trend] || trend;
+    }
+
     function buildDecisionReport(result, interpretation) {
       const tiYongType = interpretation.meta.tiYongType || "比和";
       const moveYao = interpretation.meta.moveYao || 1;
@@ -5793,38 +6156,14 @@
       const decision = calcFinalDecision({ tiYongType, bianGuaName });
       const trigger = getYaoTrigger(moveYao);
 
-      let coreJudgement = "";
-      let bullets = [];
-      let situation = "";
-
-      if (decision.finalLevel === "success") {
-        coreJudgement = "能成，但有前提。";
-        bullets = [
-          "事情整体方向是对的，但不是立刻见效的类型。",
-          "你不需要额外加力，顺着已有节奏走更容易成。",
-          trigger
-        ];
-        situation = "当前局势在往正确方向走，但节奏不能被你打乱。";
-      } else if (decision.finalLevel === "fail") {
-        coreJudgement = "很难成，不建议继续投入。";
-        bullets = [
-          "这件事在结构上对你不利，不是努力就能解决。",
-          "你越投入，消耗越明显，但对方未必承接。",
-          trigger
-        ];
-        situation = "当前局势是外部压制你，而不是你推动不够。";
-      } else {
-        coreJudgement = "能成，但你会比较累。";
-        bullets = [
-          "事情不是不行，但需要你持续推动。",
-          "目前的进展依赖你，而不是自然发展。",
-          trigger
-        ];
-        situation = "关系或局势在推进，但你的投入已经开始领先于它本身。";
-      }
+      const sceneDecision = buildScenarioDecisionText(decision.finalLevel, scenarioKey, trigger, tiYongType, benGuaName, bianGuaName);
+      let coreJudgement = sceneDecision.coreJudgement;
+      let bullets = sceneDecision.bullets;
+      let situation = sceneDecision.situation;
 
       const scenarioForVerdict = scenarioKey === 'love' || scenarioKey === 'love_general' || scenarioKey === 'love_ambiguous' || scenarioKey === 'love_reconcile' ? 'love' :
                                  scenarioKey === 'career' ? 'career' :
+                                 scenarioKey === 'money' ? 'money' :
                                  scenarioKey === 'study' ? 'study' : 'generic';
 
       let coreVerdict = coreJudgement;
@@ -5901,55 +6240,63 @@
 
     // 强信号词库（优先级最高，命中即确定场景）
     const STRONG_SIGNALS = {
-      love: ["喜欢你", "爱上", "表白", "复合", "在一起", "有没有戏", "能不能成", "怎么追", "想追", "搭讪", "分手", "前任", "暧昧", "暗恋"],
+      love: [
+        "喜欢", "爱上", "表白", "复合", "在一起", "怎么追", "想追", "搭讪",
+        "分手", "前任", "暧昧", "暗恋", "爱不爱", "脱单", "相亲",
+        "追她", "追他", "男朋友", "女朋友", "对象", "老公", "老婆"
+      ],
       lost: ["丢了", "找不到", "遗失", "失物", "东西在哪", "找手机", "找钥匙", "找钱包", "不见了"]
     };
 
-    // 社交邀约词库（命中且无强感情词时，强制走通用场景）
-    const SOCIAL_INVITES = ["找我玩", "约我", "一起玩", "找我逛街", "来找我玩", "会不会来找我", "会来找我吗", "能不能约", "有空吗", "出去玩"];
-    const LOVE_PRONOUNS = ["她", "他", "前任", "男朋友", "女朋友", "男友", "女友", "男神", "女神", "暧昧对象", "相亲对象", "TA"];
+    const SOCIAL_INVITE_KEYWORDS = [
+      "找我玩", "约我", "一起玩", "找我逛街", "来找我玩", "会不会来找我",
+      "会来找我吗", "能不能约", "有空吗", "出去玩", "聚会", "吃饭", "喝东西",
+      "五一找我", "周末找我", "主动联系", "主动找我", "会不会联系我",
+      "会不会找我", "为什么不找我", "不来找我", "出来吗", "一起出去"
+    ];
+
+    const INTERPERSONAL_KEYWORDS = [
+      "朋友", "同事", "领导", "室友", "同学", "家人", "亲戚", "合作", "合伙",
+      "误会", "矛盾", "冷淡", "疏远", "针对", "排挤", "关系", "相处", "社交",
+      "圈子", "闺蜜", "哥们", "不回我", "不理我", "已读不回", "冷处理",
+      "不主动", "回消息", "回我", "敷衍", "态度变了", "忽冷忽热"
+    ];
+
+    function hasAnyKeyword(text, keywords) {
+      return keywords.some(function(keyword) {
+        return text.includes(keyword);
+      });
+    }
+
+    function hasLoveOpportunityPattern(text) {
+      return /(我和|跟|和|他|她|TA|ta|前任|对象|喜欢的人|男朋友|女朋友|老公|老婆).{0,8}(还有机会|有机会|有没有机会)/.test(text);
+    }
 
     function getScenarioKey(question = "") {
       const q = String(question).trim();
       if (!q) return "general";
 
-      // 第一层：强信号词库优先匹配
-      // 检查强感情信号
-      for (const keyword of STRONG_SIGNALS.love) {
-        if (q.includes(keyword)) return "love";
-      }
-      // 检查强失物信号
-      for (const keyword of STRONG_SIGNALS.lost) {
-        if (q.includes(keyword)) return "lost";
-      }
+      const hasLoveSignal = hasAnyKeyword(q, STRONG_SIGNALS.love);
+      const hasLostSignal = hasAnyKeyword(q, STRONG_SIGNALS.lost);
+      const hasInviteSignal = hasAnyKeyword(q, SOCIAL_INVITE_KEYWORDS);
+      const hasInterpersonalSignal = hasAnyKeyword(q, INTERPERSONAL_KEYWORDS);
 
-      // 第二层：社交邀约过滤
-      // 如果包含社交邀约词，且没有命中强感情词，直接走通用
-      // 额外检查：如果同时包含感情相关代词（如"她"、"他"），则跳过拦截
-      let hasSocialInvite = false;
-      for (const keyword of SOCIAL_INVITES) {
-        if (q.includes(keyword)) {
-          hasSocialInvite = true;
-          break;
-        }
-      }
-      if (hasSocialInvite) {
-        let hasLovePronoun = false;
-        for (const pronoun of LOVE_PRONOUNS) {
-          if (q.includes(pronoun)) {
-            hasLovePronoun = true;
-            break;
-          }
-        }
-        if (!hasLovePronoun) return "general";
-      }
+      if (hasLostSignal) return "lost";
 
-      // 第三层：正则兜底
+      if (hasLoveSignal) return "love";
+
+      if (hasLoveOpportunityPattern(q)) return "love";
+
+      if (hasInviteSignal) return "social_invite";
+
+      if (hasInterpersonalSignal) return "interpersonal";
+
       for (let scenario of QUEST_SCENARIO) {
         if (scenario.reg.test(q)) {
           return scenario.type;
         }
       }
+
       return "general";
     }
 
@@ -6004,7 +6351,7 @@
       const isLoveScenario = scenarioKey === "love" || scenarioKey === "love_general" || scenarioKey === "love_ambiguous" || scenarioKey === "love_reconcile";
 
       if (isLoveScenario) {
-        baseContentFinal = GUA_CONTENT_MAP[benGuaName];
+        baseContentFinal = getGuaContent(benGuaName);
       } else {
         const template = SCENARIO_CONTENT_TEMPLATES[scenarioKey] || SCENARIO_CONTENT_TEMPLATES.general;
         const essence = GUA_ESSENCE[benGuaName] || { essence: "待定", pattern: "局势待明", keyPoint: "保持观察" };
@@ -6149,11 +6496,11 @@
       // 若有爻辞，则将核心义融入阶段判断
       if (YAO_CI[benGuaName] && YAO_CI[benGuaName][moveYao - 1]) {
         const yaoCore = YAO_CI[benGuaName][moveYao - 1].core;
-        interp.lines.stageLine = `第${moveYao}爻启示：${yaoCore}。` + (interp.lines.stageLine ? ' ' + interp.lines.stageLine : '');
+        interp.lines.stageLine = `第${moveYao}爻启示：${yaoCore}`;
       }
 
       interp.content.boundary = chipRewrite(interp.content.boundary);
-      interp.content.trend = chipRewrite(interp.content.trend);
+      interp.content.trend = adaptTrendByScenario(chipRewrite(interp.content.trend), scenarioKey);
 
 
 
@@ -6196,44 +6543,57 @@
       const meta = interpretation?.meta || {};
       const lines = interpretation?.lines || {};
       const content = interpretation?.content || {};
+      const ai = window._aiReasoning || {};
       const scenarioLabel = SCENARIO_RULES[meta.scenarioKey]?.label || '综合解读';
-      return `【算个der · ${scenarioLabel}】
-
-📋 问题：${meta.question || ''}
-
-卦象：${meta.benGuaName || ''} → ${meta.bianGuaName || ''}
-动爻：第${meta.moveYao || '?'}爻（${meta.movingLineBucket || '?'}区间）
-体用：${meta.tiYongType || ''}
-
-核心结论：${lines.mainLine || ''}
-阶段判断：${lines.stageLine || ''}
-
-关系状态：${content.relationshipState || ''}
-行动建议：${content.action || ''}
-
-⚠️ ${content.riskWarning || ''}
-
-—— 来自「算个der」`;
+      const shortText = ai.shortAnswer || lines.mainLine || '';
+      const finalText = ai.finalWord || ai.finalSentence || '';
+      var text = '算个der · ' + scenarioLabel + '\n' +
+        meta.benGuaName + (meta.bianGuaName ? ' → ' + meta.bianGuaName : '') + '\n';
+      if (shortText) text += '\n"' + shortText + '"';
+      if (finalText && finalText !== shortText) text += '\n"' + finalText + '"';
+      text += '\n\n—— 来自「算个der」';
+      return text;
     }
 
     // 场景类型
     const QUEST_SCENARIO = [
-      {type: "love", reg: /桃花|感情|恋爱|复合|对象|脱单|喜欢|表白|相亲|回头|在一起|喜欢我|有可能|发展|有没有戏|能不走下去|能不能成|怎么追|想追|搭讪|来找我|来找|找我玩|约我|约我吗|约我玩|主动找我|会不会联系|还会联系吗|会来找|会找我|想找我/, desc: "感情桃花类"},
-      {type: "ticket", reg: /票|候补|抢票|预约|出行|车票|机票/, desc: "票务出行类"},
       {type: "career", reg: /工作|事业|面试|升职|加薪|跳槽|创业|项目/, desc: "事业工作类"},
       {type: "money", reg: /财运|钱|工资|投资|收益|破财|赚钱|理财/, desc: "财运财富类"},
       {type: "study", reg: /考试|考得过|能过吗|能不能过|过不过得了|六级|四级|雅思|托福|期末|资格证|笔试|面试题|刷题|复习|备考|学习|考研|上岸|成绩|学业|考证|分数|分数线|挂科|补考/, desc: "学业考试类"},
       {type: "health", reg: /健康|生病|体检|养生|睡眠|饮食|身体|不舒服|疼|痛/, desc: "健康养生类"},
       {type: "lost", reg: /找手机|找钥匙|找钱包|找不到|丢了|失物|遗失|东西在哪|不见了/, desc: "失物寻找类"},
+      {type: "ticket", reg: /票|候补|抢票|预约|出行|车票|机票/, desc: "票务出行类"},
+      {type: "interpersonal", reg: /同事|领导|室友|同学|家人|亲戚|合伙|误会|矛盾|冷淡|疏远|针对|排挤|相处|社交|圈子|闺蜜|哥们|不回我|不理我|已读不回|冷处理|不主动|回消息|敷衍|态度变了|忽冷忽热/, desc: "人际关系类"},
+      {type: "social_invite", reg: /找我玩|约我|一起玩|聚会|出来玩|一起出去|吃饭|喝东西|主动联系|主动找我|会不会找我|为什么不找我|不来找我|五一找我|周末找我/, desc: "社交邀约类"},
+      {type: "love", reg: /桃花|感情|恋爱|复合|对象|脱单|喜欢|表白|相亲|回头|在一起|怎么追|想追|搭讪|暧昧|暗恋|前任|爱不爱|男朋友|女朋友|老公|老婆/, desc: "感情桃花类"},
       {type: "general", reg: /.*/, desc: "通用杂事类"}
     ];
 
     // ===================== 工具函数 =====================
-    function escapeHtml(str) {
-      if (!str) return '';
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
+    function escapeHtml(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function clampTextForFreeLayer(text, maxLen) {
+      const raw = String(text || "").replace(/\s+/g, " ").trim();
+      if (!raw) return "";
+      if (raw.length <= maxLen) return raw;
+      return raw.slice(0, maxLen).replace(/[，。；、,.!?！？：:]*$/g, "") + "。";
+    }
+
+    function getFreeShortAnswer(ai, fallbackText) {
+      const text = ai && ai.shortAnswer ? ai.shortAnswer : fallbackText;
+      return clampTextForFreeLayer(text, 42);
+    }
+
+    function getFreeRiskBoundary(ai, fallbackText) {
+      const text = ai && ai.riskBoundary ? ai.riskBoundary : fallbackText;
+      return clampTextForFreeLayer(text, 28);
     }
 
     function randomNum() {
@@ -6245,8 +6605,7 @@
       document.getElementById('question').value = '';
       document.getElementById('num1').value = '';
       document.getElementById('num2').value = '';
-      document.getElementById('resultArea').classList.add('hidden');
-      document.getElementById('resultArea').innerHTML = '';
+      backToDivinationEntry();
     }
 
     function setScenario(type) {
@@ -6270,40 +6629,51 @@
 // ========== [S3] 推演引擎层：纯函数，不操作DOM ==========
     // ===================== 卦象计算 =====================
     // 先天数对应八卦：1=乾, 2=兑, 3=离, 4=震, 5=巽, 6=坎, 7=艮, 8=坤
-    // 变爻计算：动爻位置 = (数1 + 数2) % 6，结果0时为6爻动
-    // 变卦规则：动爻位阳变阴、阴变阳
+    function getHexagramName(shangIdx, xiaIdx) {
+      return SIXTY_FOUR_GUA[xiaIdx][shangIdx];
+    }
+
+    function findGuaByYao(yao) {
+      const key = yao.join("");
+      for (var idx in GUA_BASE) {
+        if (GUA_BASE[idx].yao.join("") === key) {
+          return Number(idx);
+        }
+      }
+      return 0;
+    }
+
     function calcGua(num1, num2) {
       const n1 = Math.max(1, Math.min(8, parseInt(num1) || 1));
       const n2 = Math.max(1, Math.min(8, parseInt(num2) || 1));
-      
-      // 先天数转卦索引（0-7对应乾兑离震巽坎艮坤）
+
       const shangIdx = n1 - 1;
       const xiaIdx = n2 - 1;
-      
-      // 计算动爻位置（1-6）
+
       const total = n1 + n2;
       const moveYao = total % 6 === 0 ? 6 : total % 6;
-      
-      // 八卦阴阳：乾震坎艮为阳（0），兑离巽坤为阴（1）
-      const isYang = [true, false, false, true, false, true, true, false];
-      
-      // 计算变卦
+
+      const shangBianYao = [...GUA_BASE[shangIdx].yao];
+      const xiaBianYao = [...GUA_BASE[xiaIdx].yao];
       let shangBianIdx = shangIdx;
       let xiaBianIdx = xiaIdx;
-      
-      if (moveYao >= 4) {
-        shangBianIdx = isYang[shangIdx] ? getComplementGua(shangIdx) : getYinComplement(shangIdx);
+
+      if (moveYao <= 3) {
+        var pos = moveYao - 1;
+        xiaBianYao[pos] = xiaBianYao[pos] ? 0 : 1;
+        xiaBianIdx = findGuaByYao(xiaBianYao);
       } else {
-        xiaBianIdx = isYang[xiaIdx] ? getComplementGua(xiaIdx) : getYinComplement(xiaIdx);
+        var pos = moveYao - 4;
+        shangBianYao[pos] = shangBianYao[pos] ? 0 : 1;
+        shangBianIdx = findGuaByYao(shangBianYao);
       }
-      
-      // 计算互卦（二三四爻=下互，三四五爻=上互）
+
       const huGua = calcHuGua(shangIdx, xiaIdx);
-      
-      const benGuaName = SIXTY_FOUR_GUA[shangIdx][xiaIdx];
-      const bianGuaName = SIXTY_FOUR_GUA[shangBianIdx][xiaBianIdx];
-      const huGuaName = SIXTY_FOUR_GUA[huGua.shangIdx][huGua.xiaIdx];
-      
+
+      const benGuaName = getHexagramName(shangIdx, xiaIdx);
+      const bianGuaName = getHexagramName(shangBianIdx, xiaBianIdx);
+      const huGuaName = getHexagramName(huGua.shangIdx, huGua.xiaIdx);
+
       return {
         shang: GUA_BASE[shangIdx],
         xia: GUA_BASE[xiaIdx],
@@ -6322,64 +6692,38 @@
         }
       };
     }
-    
-    // 计算互卦
+
     function calcHuGua(shangIdx, xiaIdx) {
-      // 获取本卦的六爻（从下往上：初爻、二爻、三爻、四爻、五爻、上爻）
       const shangGua = GUA_BASE[shangIdx];
       const xiaGua = GUA_BASE[xiaIdx];
-      
-      // 下卦爻：初爻、二爻、三爻
-      // 上卦爻：四爻、五爻、上爻
-      const xiaYao = xiaGua.yao; // [下, 中, 上]
-      const shangYao = shangGua.yao; // [下, 中, 上]
-      
-      // 二三四爻 = 下互（取本卦的二三四爻）
-      // 二爻 = 下卦中爻
-      // 三爻 = 下卦上爻
-      // 四爻 = 上卦下爻
+
+      const xiaYao = xiaGua.yao;
+      const shangYao = shangGua.yao;
+
       const huXiaYao = [xiaYao[1], xiaYao[2], shangYao[0]];
-      
-      // 三四五爻 = 上互（取本卦的三四五爻）
-      // 三爻 = 下卦上爻
-      // 四爻 = 上卦下爻
-      // 五爻 = 上卦中爻
       const huShangYao = [xiaYao[2], shangYao[0], shangYao[1]];
-      
-      // 根据爻的阴阳组合找到对应的八卦
+
       const huXiaIdx = findGuaByYao(huXiaYao);
       const huShangIdx = findGuaByYao(huShangYao);
-      
+
       return { shangIdx: huShangIdx, xiaIdx: huXiaIdx };
     }
-    
-    // 根据三爻阴阳找八卦索引
-    function findGuaByYao(yao) {
-      // 八卦爻的阴阳表示（从下往上）
-      const guaYaoMap = {
-        '111': 0, // 乾 ☰
-        '011': 1, // 兑 ☱
-        '101': 2, // 离 ☲
-        '001': 3, // 震 ☳
-        '110': 4, // 巽 ☴
-        '010': 5, // 坎 ☵
-        '100': 6, // 艮 ☶
-        '000': 7  // 坤 ☷
-      };
-      const yaoStr = yao.join('');
-      return guaYaoMap[yaoStr];
-    }
-    
-    // 获取阳卦的阴 complement
-    function getComplementGua(idx) {
-      const map = {0: 7, 3: 4, 5: 2, 6: 1};
-      return map[idx] !== undefined ? map[idx] : idx;
-    }
-    
-    // 获取阴卦的阳 complement
-    function getYinComplement(idx) {
-      const map = {7: 0, 4: 3, 2: 5, 1: 6};
-      return map[idx] !== undefined ? map[idx] : idx;
+
+    function debugCalcGua(num1, num2) {
+      const r = calcGua(num1, num2);
+      console.table({
+        num1: num1,
+        num2: num2,
+        shang: r.shang.name,
+        xia: r.xia.name,
+        benGuaName: r.benGuaName,
+        bianGuaName: r.bianGuaName,
+        huGuaName: r.huGuaName,
+        moveYao: r.moveYao,
+        ti: r.ti.name + r.ti.ele,
+        yong: r.yong.name + r.yong.ele
+      });
+      return r;
     }
 
     // 【体用关系推演】
@@ -8251,12 +8595,144 @@
 // ========== [S4] 渲染层：操作DOM，不修改数据 ==========
     // ===================== 渲染结果 =====================
     // ===================== Task A3: renderResult 渲染骨架 =====================
+    // ===================== AI 解读卡片渲染 =====================
+    function renderAiInterpretationCard(aiContent) {
+      var ai = aiContent || window._aiReasoning;
+      if (!ai || !ai.aiEnhanced) {
+        if (ai && ai.aiStatus === 'loading') {
+          return '';
+        }
+        var reason = (ai && ai.aiFallbackReason) || "已展示本地卦象推演结果。";
+        return '<div class="result-card mb-4" style="border-left:3px solid rgba(201,166,107,0.2);padding:1rem 1.25rem;">' +
+          '<div style="font-size:0.75rem;color:var(--text-tertiary);margin-bottom:0.25rem;">补一句</div>' +
+          '<div style="font-size:0.85rem;color:var(--text-tertiary);line-height:1.6;">' + escapeHtml(reason) + '</div>' +
+          '</div>';
+      }
+      var sections = [
+        { label: "短断", text: ai.shortAnswer, color: "rgba(220,180,90,0.9)" },
+        { label: "下一步", text: ai.actionStrategy, color: "rgba(100,160,200,0.8)" },
+        { label: "别踩坑", text: ai.riskBoundary, color: "rgba(200,90,74,0.85)", isWarning: true }
+      ];
+      var html = '<div class="result-card mb-4" style="padding:1rem 1.25rem;">';
+      if (ai.headline) {
+        html += '<div style="font-size:1rem;font-weight:600;color:var(--accent);margin-bottom:0.75rem;line-height:1.5;">' + escapeHtml(ai.headline) + '</div>';
+      }
+      for (var i = 0; i < sections.length; i++) {
+        var s = sections[i];
+        if (!s.text) continue;
+        var textColor = s.isWarning ? "rgba(200,90,74,0.9)" : "var(--text-secondary)";
+        html += '<div style="margin-bottom:0.6rem;">' +
+          '<div style="font-size:0.7rem;color:' + s.color + ';margin-bottom:0.15rem;">' + s.label + '</div>' +
+          '<div style="font-size:0.85rem;color:' + textColor + ';line-height:1.7;">' + escapeHtml(s.text) + '</div>' +
+          '</div>';
+      }
+      html += '<div style="border-top:1px solid rgba(201,166,107,0.08);margin-top:0.5rem;padding-top:0.55rem;font-size:0.72rem;color:var(--text-tertiary);text-align:center;line-height:1.6;">展开看看这卦为什么这么断。</div>';
+      html += '</div>';
+      return html;
+    }
+
+    function enterResultPage(targetArea) {
+      const header = document.getElementById('divineHeader');
+      const entry = document.getElementById('divinationEntry');
+      if (header) header.classList.add('hidden');
+      if (entry) entry.classList.add('hidden');
+      if (targetArea) {
+        targetArea.classList.remove('hidden');
+        targetArea.setAttribute('data-result-page', 'true');
+      }
+      try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch(e) { window.scrollTo(0, 0); }
+    }
+
+    function backToDivinationEntry() {
+      const header = document.getElementById('divineHeader');
+      const entry = document.getElementById('divinationEntry');
+      const resultArea = document.getElementById('resultArea');
+      if (header) header.classList.remove('hidden');
+      if (entry) entry.classList.remove('hidden');
+      if (resultArea) {
+        resultArea.innerHTML = '';
+        resultArea.classList.add('hidden');
+        resultArea.removeAttribute('data-result-page');
+      }
+      const backTopBtn = document.getElementById('resultBackTopBtn');
+      if (backTopBtn) backTopBtn.remove();
+      try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch(e) { window.scrollTo(0, 0); }
+    }
+
+    function renderResultPageTopbar() {
+      const topbar = document.createElement('div');
+      topbar.className = 'result-page-topbar';
+      topbar.innerHTML = `
+        <button type="button" class="result-back-btn" onclick="backToDivinationEntry()" aria-label="返回起卦页">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6"></path>
+            <path d="M9 12h11"></path>
+          </svg>
+          <span>返回</span>
+        </button>
+      `;
+      return topbar;
+    }
+
+    function renderBackTopButton() {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'result-backtop-btn';
+      btn.setAttribute('aria-label', '返回顶部');
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 19V6"></path>
+          <path d="M6.5 11.5 12 6l5.5 5.5"></path>
+        </svg>
+      `;
+      btn.onclick = function() {
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        catch(e) { window.scrollTo(0, 0); }
+      };
+      return btn;
+    }
+
+    function appendResultActions(targetArea) {
+      if (!targetArea) return;
+
+      const layer = document.createElement('div');
+      layer.className = 'result-card mb-4';
+      layer.style.cssText = 'padding:0.75rem 1rem;';
+      layer.innerHTML =
+        '<div class="result-bottom-bar">' +
+          '<button class="action-btn" onclick="copyResult()">复制全文</button>' +
+          '<button class="action-btn" onclick="generateShareCard()">生成卡片</button>' +
+          '<button class="action-btn" onclick="askAnother()">再问一卦</button>' +
+        '</div>';
+      targetArea.appendChild(layer);
+
+      const reviewSection = document.createElement('div');
+      reviewSection.className = 'result-review-section';
+      reviewSection.innerHTML =
+        '<div style="font-size:0.7rem;color:var(--text-tertiary);margin-bottom:0.4rem;">回头看看准不准</div>' +
+        '<button class="review-btn" onclick="setReviewReminder(3)">3天后提醒我</button>' +
+        '<button class="review-btn" onclick="setReviewReminder(7)">7天后提醒我</button>';
+      targetArea.appendChild(reviewSection);
+    }
+
     function renderResult(interpretation, result, container = null, aiCoreAnalysis = null) {
       clearResultCardObserver();
       const targetArea = container || document.getElementById('resultArea');
       if (!targetArea) return;
       targetArea.innerHTML = '';
-      targetArea.classList.remove('hidden');
+      if (!container) {
+        enterResultPage(targetArea);
+        targetArea.appendChild(renderResultPageTopbar());
+
+        var oldBackTop = document.getElementById('resultBackTopBtn');
+        if (oldBackTop) oldBackTop.remove();
+
+        var backTopBtn = renderBackTopButton();
+        backTopBtn.id = 'resultBackTopBtn';
+        document.body.appendChild(backTopBtn);
+      } else {
+        targetArea.classList.remove('hidden');
+      }
       
       if (!interpretation) { targetArea.innerHTML = '<div class="glass-card p-4 text-center">数据异常</div>'; return; }
       
@@ -8269,7 +8745,7 @@
       try {
         if (typeof buildDecisionReport === 'function') {
           const report = buildDecisionReport(result, interpretation);
-          const displayVerdict = report ? (report.coreJudgement || report.coreVerdict || lines.mainLine || '') : (lines.mainLine || '');
+          const displayVerdict = report ? (report.coreVerdict || report.coreJudgement || lines.mainLine || '') : (lines.mainLine || '');
           let borderColor = 'var(--accent)';
           const vfc = displayVerdict || '';
           if (vfc.includes('很难') || vfc.includes('不建议') || vfc.includes('不会') || vfc.includes('不可能')) borderColor = 'var(--error)';
@@ -8295,68 +8771,34 @@
           // 裁决句
           const verdictHtml = `<div class="text-center"><span class="text-lg font-bold" style="color:${borderColor};">${escapeHtml(displayVerdict)}</span></div>`;
 
-          // 要点列表
-          let pointsHtml = '';
-          if (report && report.bullets && report.bullets.length > 0) {
-            pointsHtml = '<div class="mt-3" style="display:flex;flex-direction:column;gap:0.5rem;">';
-            report.bullets.forEach(function(b) {
-              pointsHtml += '<div style="display:flex;align-items:flex-start;gap:0.4rem;"><span style="color:var(--accent);font-size:0.6rem;flex-shrink:0;margin-top:0.25rem;">▸</span><span style="font-size:0.85rem;color:var(--text-secondary);line-height:1.7;">' + escapeHtml(b) + '</span></div>';
-            });
-            pointsHtml += '</div>';
-          }
-
           // 芯片行
           const scenarioLabel = SCENARIO_RULES[meta.scenarioKey]?.label || (interpretation.meta.scenarioLabel || '');
           const chipHtml = '<div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid rgba(201,166,107,0.08);">' +
             (scenarioLabel ? '<span class="chip-sm">' + escapeHtml(scenarioLabel) + '</span>' : '') +
-            (content.boundary || content.boundaryHint ? '<span class="chip-sm">' + escapeHtml(content.boundary || content.boundaryHint || '') + '</span>' : '') +
-            (content.trend || content.trendLabel ? '<span class="chip-sm">' + escapeHtml(content.trend || content.trendLabel || '') + '</span>' : '') +
+            (meta.tiYongType ? '<span class="chip-sm">' + escapeHtml(meta.tiYongType) + '</span>' : '') +
+            (meta.moveYao ? '<span class="chip-sm">第' + escapeHtml(meta.moveYao) + '爻</span>' : '') +
             '</div>';
 
+          var ai = window._aiReasoning || {};
+          var fsSituation = getFreeShortAnswer(ai, (content && content.relationshipState) || '');
+          var fsRisk = getFreeRiskBoundary(ai, (content && content.riskWarning) || '');
+          var fsVerdictText = clampTextForFreeLayer(ai.headline || displayVerdict, 18);
+          var fsVerdictColor = borderColor;
+          if (ai.headline || ai.shortAnswer) fsVerdictColor = 'var(--accent)';
+
+          var fsBody = symbolHtml + guaNameHtml +
+            '<div id="fs-verdict"><div class="text-center" style="margin-bottom:0.8rem;"><span class="text-lg font-bold" style="color:' + fsVerdictColor + ';">' + escapeHtml(fsVerdictText) + '</span></div></div>' +
+            (fsSituation ? '<div id="fs-situation" class="fs-field"><div class="fs-label" style="color:rgba(100,160,200,0.8);">当前局势</div><div class="fs-value" id="fs-situation-text">' + escapeHtml(fsSituation) + '</div></div>' : '<div id="fs-situation" class="fs-field" style="display:none;"><div class="fs-label" style="color:rgba(100,160,200,0.8);">当前局势</div><div class="fs-value" id="fs-situation-text"></div></div>') +
+            (fsRisk ? '<div id="fs-risk" class="fs-field"><div class="fs-label" style="color:rgba(200,90,74,0.85);">一句提醒</div><div class="fs-value" id="fs-risk-text">' + escapeHtml(fsRisk) + '</div></div>' : '<div id="fs-risk" class="fs-field" style="display:none;"><div class="fs-label" style="color:rgba(200,90,74,0.85);">一句提醒</div><div class="fs-value" id="fs-risk-text"></div></div>') +
+            chipHtml;
+
           const layer1 = document.createElement('div');
-          layer1.className = 'result-card mb-4';
-          layer1.innerHTML = symbolHtml + guaNameHtml + verdictHtml + pointsHtml + chipHtml;
+          layer1.className = 'result-card mb-4 first-screen-card';
+          layer1.id = 'firstScreenCard';
+          layer1.innerHTML = fsBody;
           targetArea.appendChild(layer1);
         }
       } catch(e) { console.error('结论卡渲染出错:', e); }
-
-      // ========== 解读层：三张紧凑卡片 ==========
-      setTimeout(() => {
-        try {
-          const row = document.createElement('div');
-          row.className = 'result-row animate-in';
-          row.innerHTML = `
-            <div class="result-chip">
-              <div class="chip-label">${escapeHtml(meta.benGuaName || '')}</div>
-              <div class="chip-value">${escapeHtml(lines.stageLine || '')}</div>
-            </div>
-            <div class="result-chip">
-              <div class="chip-label">边界提示</div>
-              <div class="chip-value">${escapeHtml(content.boundary || '')}</div>
-            </div>
-            <div class="result-chip">
-              <div class="chip-label">趋势 · ${escapeHtml(meta.tiYongType || '')}</div>
-              <div class="chip-value">${escapeHtml(content.trend || '')}</div>
-            </div>
-          `;
-          targetArea.appendChild(row);
-        } catch(e) { console.error('解读层渲染出错:', e); }
-      }, 150);
-
-      // ===== 第2层：操作按钮（建议行动和风险预警已移至AI推演区） =====
-      setTimeout(() => {
-        try {
-          const layer2 = document.createElement('div');
-          layer2.className = 'result-card mb-4';
-          const btnHtml = '<div class="flex justify-center gap-3" style="padding:0.25rem 0;">' +
-            '<button class="action-btn" onclick="copyResult()">复制</button>' +
-            '<button class="action-btn" onclick="shareResult()">分享</button>' +
-            '<button class="action-btn" onclick="generateImage()">图片</button>' +
-            '</div>';
-          layer2.innerHTML = btnHtml;
-          targetArea.appendChild(layer2);
-        } catch(e) { console.log('第2层渲染出错:', e); }
-      }, 300);
 
       // ========== 推导层：折叠区 ==========
       setTimeout(() => {
@@ -8400,7 +8842,7 @@
           sealWrapper.className = 'seal-wrapper';
           sealWrapper.innerHTML = `
             <div class="seal"><span class="seal-inner">☷</span></div>
-            <span class="seal-label">展开深层推演</span>
+            <span class="seal-label">看这卦为什么这么断</span>
           `;
           sealWrapper.onclick = function() {
             const expanded = reasoningContainer.dataset.expanded === 'true';
@@ -8416,7 +8858,7 @@
                 reasoningContainer.style.maxHeight = '0';
               });
               reasoningContainer.dataset.expanded = 'false';
-              if (label) label.textContent = '展开深层推演';
+              if (label) label.textContent = '看这卦为什么这么断';
             } else {
               reasoningContainer.style.maxHeight = '0';
               reasoningContainer.style.overflow = 'hidden';
@@ -8432,12 +8874,13 @@
                 reasoningContainer.style.overflow = 'visible';
               }, 300);
               reasoningContainer.dataset.expanded = 'true';
-              if (label) label.textContent = '收起深层推演';
+              if (label) label.textContent = '收起解释';
               reasoningContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
           };
           targetArea.appendChild(sealWrapper);
           targetArea.appendChild(reasoningContainer);
+          appendResultActions(targetArea);
         } catch(e) { console.error('推导层渲染出错:', e); }
       }, 600);
 
@@ -8445,6 +8888,8 @@
         if (typeof activateResultCards === 'function') activateResultCards();
       }, 100);
     }
+
+    function escapeHTML(value) { return escapeHtml(value); }
 
     // ===================== 卦理深度推演层 =====================
     function renderGuaReasoning(interpretation, result, aiContent) {
@@ -8532,68 +8977,141 @@
 
       // 整块大卡片
       var html = '<div class="result-card" style="padding:1.25rem;margin-top:1.5rem;border:1px solid rgba(201,166,107,0.2);box-shadow:0 0 20px rgba(201,166,107,0.05),0 2px 8px rgba(0,0,0,0.15);">';
-
-      // 1. 格局分析
-      var tiYongFallback = (tiYongMeanings[tiYongType] || tiYongMeanings["比和"]) + (userQuestion ? activeSuffix.tiYong : '');
-      if (!aiContent || !aiContent.tiYongAnalysis) {
-        var q = userQuestion;
-        if (q.indexOf('公司') !== -1 || q.indexOf('面试') !== -1 || q.indexOf('工作') !== -1 || q.indexOf('靠谱') !== -1) {
-          tiYongFallback = tiYongFallback.replace(/你所处的环境/g, '你面试的这家公司').replace(/这件事/g, '这家公司');
-        } else if (q.indexOf('她') !== -1 || q.indexOf('他') !== -1 || q.indexOf('TA') !== -1 || q.indexOf('喜欢') !== -1 || q.indexOf('找我') !== -1 || q.indexOf('在一起') !== -1) {
-          tiYongFallback = tiYongFallback.replace(/你所处的环境/g, '你和TA之间的关系').replace(/这件事/g, '这段关系');
-        }
+      function reportText(value) {
+        return escapeHTML(value || '').replace(/\n/g, '<br>');
       }
-      html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.25);"><div class="reasoning-title">格局分析 · 体用生克</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + ((aiContent && aiContent.tiYongAnalysis) ? aiContent.tiYongAnalysis : tiYongFallback) + '</p></div>';
+      var hasDeepReport = !!(aiContent && (aiContent.mainThread || aiContent.coreConflict || aiContent.guaLogic || aiContent.realWorldMapping || aiContent.actionStrategy || aiContent.deepDive || aiContent.concreteAnalysis));
+
+      if (aiContent && aiContent.aiFallbackReason) {
+        html += '<div style="background:rgba(201,166,107,0.06);border:1px solid rgba(201,166,107,0.12);border-radius:8px;padding:0.5rem 0.75rem;margin-bottom:0.75rem;font-size:0.75rem;color:var(--text-tertiary);">' + escapeHTML(aiContent.aiFallbackReason) + '</div>';
+      }
+
+      var isInterpersonalScene = meta.scenarioKey === "social_invite" || meta.scenarioKey === "interpersonal";
+      var label1 = isInterpersonalScene ? "关系主线" : "当前";
+      var label2 = isInterpersonalScene ? "行为信号" : "边界";
+      var label3 = isInterpersonalScene ? "下一步策略" : "下一步";
+      var basePanelTitle = isInterpersonalScene ? "关系判断" : "基础盘";
+
+      html += '<div class="reasoning-paragraph" style="border-left-color:rgba(220,180,90,0.28);background:rgba(220,180,90,0.025);"><div class="reasoning-title" style="color:rgba(220,180,90,0.9);">' + basePanelTitle + '</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' +
+        '<strong style="color:var(--text-primary);">' + label1 + '：</strong>' + escapeHTML((interpretation.content && interpretation.content.relationshipState) || '') +
+        '<br><strong style="color:var(--text-primary);">' + label2 + '：</strong>' + escapeHTML((interpretation.content && interpretation.content.boundary) || '') +
+        '<br><strong style="color:var(--text-primary);">' + label3 + '：</strong>' + escapeHTML((interpretation.content && interpretation.content.action) || '') +
+        '</p></div>';
       html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
 
-      // 2. 动爻精解
-      var yaoContent = (aiContent && aiContent.yaoExplanation) ? aiContent.yaoExplanation : ((yaoDetails[moveYao] || stageInfoRaw.meaning) + (userQuestion ? activeSuffix.yao : ''));
-      html += '<div class="reasoning-paragraph" style="border-left-color:rgba(200,90,74,0.25);"><div class="reasoning-title" style="color:rgba(200,140,100,0.9);">动爻精解 · 第' + moveYao + '爻</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + yaoContent + '</p>';
+      if (hasDeepReport) {
+        var mainThreadText = aiContent.mainThread || aiContent.deepDive || '';
+        if (mainThreadText) {
+          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.35);"><div class="reasoning-title" style="color:var(--accent);">为什么是这个局</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(mainThreadText) + '</p></div>';
+          html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+        }
+        if (aiContent.coreConflict) {
+          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(200,90,74,0.28);"><div class="reasoning-title" style="color:rgba(200,90,74,0.85);">真正卡住的地方</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(aiContent.coreConflict) + '</p></div>';
+          html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+        }
+        var guaLogicText = aiContent.guaLogic || aiContent.guaExplanation || '';
+        if (guaLogicText) {
+          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(180,140,200,0.28);"><div class="reasoning-title" style="color:rgba(180,140,200,0.85);">卦里怎么说</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(guaLogicText) + '</p></div>';
+          html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+        }
+        var mappingText = aiContent.realWorldMapping || aiContent.concreteAnalysis || '';
+        if (mappingText) {
+          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(100,160,200,0.30);"><div class="reasoning-title" style="color:rgba(100,160,200,0.85);">落到现实里</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(mappingText) + '</p></div>';
+          html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+        }
+        if (aiContent.verificationSigns) {
+          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(100,180,140,0.28);"><div class="reasoning-title" style="color:rgba(100,180,140,0.85);">接下来怎么看</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(aiContent.verificationSigns) + '</p></div>';
+          html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+        }
+        var actText = aiContent.actionStrategy || aiContent.strategy || aiContent.actionPlan || '';
+        if (actText) {
+          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(100,160,200,0.30);"><div class="reasoning-title" style="color:rgba(100,160,200,0.85);">你现在怎么做</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(actText) + '</p></div>';
+          html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+        }
+        if (aiContent.riskBoundary) {
+          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(200,90,74,0.22);"><div class="reasoning-title" style="color:rgba(200,140,100,0.85);">边界和避坑</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(aiContent.riskBoundary) + '</p></div>';
+          html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+        }
+      }
+
+      // ===== 暗线与心态（对用户心理状态的洞察） =====
+      var emotionalText = '';
+      if (aiContent && aiContent.emotionalReading) {
+        emotionalText = escapeHTML(aiContent.emotionalReading);
+      }
+      if (!hasDeepReport && emotionalText) {
+        var emotionalLabel = isInterpersonalScene ? "关系主线" : "暗线与心态";
+        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(180,140,200,0.3);"><div class="reasoning-title" style="color:rgba(180,140,200,0.85);">' + emotionalLabel + '</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + emotionalText + '</p></div>';
+        html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+      }
+
+      // ===== 卦象拆解（格局分析+动爻精解） =====
+      var readingText = '';
+      if (aiContent && (aiContent.guaExplanation || aiContent.hexagramReading)) {
+        readingText = escapeHTML(aiContent.guaExplanation || aiContent.hexagramReading);
+      } else if (window._aiFailed) {
+        readingText = '<span style="color:var(--text-tertiary);">深度解读暂不可用，已展示本地卦象推演结果。</span>';
+      } else {
+        var q = userQuestion || '';
+        readingText = (tiYongMeanings[tiYongType] || tiYongMeanings["比和"]);
+        readingText += '<br><br>' + (yaoDetails[moveYao] || stageInfoRaw.meaning || '');
+        if (q.indexOf('公司') !== -1 || q.indexOf('面试') !== -1 || q.indexOf('工作') !== -1 || q.indexOf('靠谱') !== -1) {
+          readingText = readingText.replace(/你所处的环境/g, '你面试的这家公司').replace(/这件事/g, '这家公司');
+        } else if (q.indexOf('她') !== -1 || q.indexOf('他') !== -1 || q.indexOf('TA') !== -1 || q.indexOf('喜欢') !== -1 || q.indexOf('找我') !== -1) {
+          readingText = readingText.replace(/你所处的环境/g, '你和TA之间的关系').replace(/这件事/g, '这段关系');
+        }
+      }
+      if (!hasDeepReport) {
+      html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.25);"><div class="reasoning-title">卦象拆解</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + readingText + '</p>';
       if (YAO_CI && YAO_CI[benGuaName] && YAO_CI[benGuaName][moveYao - 1]) {
-        var yaoCiText = (YAO_CI[benGuaName][moveYao - 1].text||'').replace(/。+$/g,'');
-        var yaoCiCore = (YAO_CI[benGuaName][moveYao - 1].core||'').replace(/。+$/g,'');
-        html += '<div class="rounded-xl px-3 py-2 mt-2" style="background:rgba(201,166,107,0.03);border:1px solid rgba(201,166,107,0.06);"><p class="text-xs" style="color:var(--text-tertiary);font-family:serif;"><strong style="color:var(--text-secondary);">爻辞：</strong>"' + yaoCiText + '。"</p><p class="text-xs mt-1" style="color:var(--text-tertiary);">' + yaoCiCore + '。</p></div>';
+        var yaoCiText = YAO_CI[benGuaName][moveYao - 1].text.replace(/。+$/g, '');
+        var yaoCiCore = YAO_CI[benGuaName][moveYao - 1].core.replace(/。+$/g, '');
+        html += '<div class="rounded-xl px-3 py-2 mt-2 mb-2" style="background:rgba(201,166,107,0.03);border:1px solid rgba(201,166,107,0.06);"><p class="text-xs" style="color:var(--text-tertiary);font-family:serif;"><strong style="color:var(--text-secondary);">爻辞：</strong>"' + yaoCiText + '。"</p><p class="text-xs mt-1" style="color:var(--text-tertiary);">' + yaoCiCore + '。</p></div>';
       }
       html += '</div>';
       html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+      } else if (YAO_CI && YAO_CI[benGuaName] && YAO_CI[benGuaName][moveYao - 1]) {
+        var deepYaoCiText = YAO_CI[benGuaName][moveYao - 1].text.replace(/。+$/g, '');
+        var deepYaoCiCore = YAO_CI[benGuaName][moveYao - 1].core.replace(/。+$/g, '');
+        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.18);"><div class="reasoning-title">动爻原文</div><p class="text-xs leading-7" style="color:var(--text-tertiary);font-family:serif;">"' + escapeHTML(deepYaoCiText) + '。"</p><p class="text-sm leading-7 mt-1" style="color:var(--text-secondary);">' + escapeHTML(deepYaoCiCore) + '。</p></div>';
+        html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+      }
 
-      // 3. 趋势演变
-      var trendFallback = '在「' + benGuaName + '」卦中，第' + moveYao + '爻的变动引发了整体卦象的转变。这意味着你当前所处的「' + benEssence.essence + '」状态，正朝着「' + bianEssence.essence + '」的方向演进。';
-      if (benGuaName === bianGuaName) {
-        trendFallback += '本卦与变卦相同，说明该阶段具有较强的持续性和稳定性。短期内局面不会发生根本性转变，这既是机会（你可以从容布局），也是提醒（不要期待外界突变来替你解决问题）。';
-      } else if (bianEssence.essence.indexOf('益') !== -1 || bianEssence.essence.indexOf('升') !== -1 || bianEssence.essence.indexOf('顺') !== -1) {
-        trendFallback += '演变的方向是积极的，但这个过程需要时间，也需要你持续做出正确的行动。你现在的每一步都在为那个正向的结果铺路。';
-      } else if (bianEssence.essence.indexOf('难') !== -1 || bianEssence.essence.indexOf('险') !== -1 || bianEssence.essence.indexOf('困') !== -1) {
-        trendFallback += '演变的方向带有挑战，但这并不代表结局已定。提前看到潜在的风险，本身就是一种优势——你可以在问题到来之前做好预案，而不是被动应对。';
+      // ===== 演变与暗流（趋势演变+互卦揭示） =====
+      var evolutionText = '';
+      if (aiContent && (aiContent.trend || aiContent.evolutionAndHidden)) {
+        evolutionText = escapeHTML(aiContent.trend || aiContent.evolutionAndHidden);
+      } else if (window._aiFailed) {
+        evolutionText = '<span style="color:var(--text-tertiary);">深度解读生成较慢，已展示本地推演结果。</span>';
       } else {
-        trendFallback += '方向正在变化，趋势本身不决定结果——你接下来怎么应对这个趋势，才是决定最后走向的关键。';
+        evolutionText = '从「' + benGuaName + '」走向「' + bianGuaName + '」，当前状态正朝着新方向演进。互卦' + huGuaName + '揭示了内在因素。';
       }
-      var trendContent = (aiContent && aiContent.bianGuaTrend) ? aiContent.bianGuaTrend : (trendFallback + (userQuestion ? activeSuffix.trend : ''));
-      html += '<div class="reasoning-paragraph" style="border-left-color:rgba(100,180,140,0.25);"><div class="reasoning-title" style="color:rgba(100,180,140,0.8);">趋势演变 · ' + benGuaName + ' → ' + bianGuaName + '</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + trendContent + '</p></div>';
-      html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
-
-      // 3.5 行动建议
-      if (aiContent && aiContent.actionSuggestion) {
-        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(100,180,140,0.25);"><div class="reasoning-title" style="color:rgba(100,180,140,0.8);">行动建议</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + aiContent.actionSuggestion + '</p></div>';
+      if (!hasDeepReport) {
+        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(100,180,140,0.25);"><div class="reasoning-title" style="color:rgba(100,180,140,0.8);">演变与暗流 · ' + benGuaName + ' → ' + bianGuaName + '</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + evolutionText + '</p></div>';
         html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
       }
 
-      // 4. 互卦揭示
-      var huContent = '';
-      if (huEssence) {
-        huContent = (aiContent && aiContent.huGuaFactor) ? aiContent.huGuaFactor : ('互卦是隐藏在本卦内部的卦象，它揭示的是事情发展过程中那些不易察觉的内在因素和深层逻辑。' + huEssence.pattern + '。' + huEssence.keyPoint);
-        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(140,120,200,0.25);"><div class="reasoning-title" style="color:rgba(140,120,200,0.8);">内在因素 · ' + huGuaName + '</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + huContent + '</p></div>';
+      // ===== 行动与警示（行动建议+风险预警） =====
+      var actionText = '';
+      if (aiContent && (aiContent.advice || aiContent.warning || aiContent.actionAndWarning)) {
+        var actionParts = [];
+        if (aiContent.advice) actionParts.push(escapeHTML(aiContent.advice));
+        if (aiContent.warning) actionParts.push('<br><span style="color:rgba(200,90,74,0.85);">⚠ ' + escapeHTML(aiContent.warning) + '</span>');
+        actionText = actionParts.length ? actionParts.join('') : escapeHTML(aiContent.actionAndWarning);
+      } else if (window._aiFailed) {
+        actionText = '<span style="color:var(--text-tertiary);">深度解读暂不可用，已展示本地建议。</span>';
+      } else {
+        actionText = '当前局势尚不明朗，建议等待更明确的信号。';
+      }
+      if (!hasDeepReport) {
+        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(200,90,74,0.25);"><div class="reasoning-title" style="color:rgba(200,140,100,0.9);">行动与警示</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + actionText + '</p></div>';
         html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
       }
 
-      // 4.5 风险预警
-      if (aiContent && aiContent.riskWarning) {
-        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(200,90,74,0.4);"><div class="reasoning-title" style="color:var(--error);">⚠ 风险预警</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + aiContent.riskWarning + '</p></div>';
-        html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
-      }
-
-      // 5. 全盘总结
+      // ===== 一语定局（全盘总结） =====
       var sKey = meta.scenarioKey || "";
+      var scenarioPrefix = 'generic';
+      try { scenarioPrefix = getScenarioPrefix(sKey); } catch(e) {}
 
       var closeMap = {
         love: {
@@ -8620,6 +9138,30 @@
           "用克体": "外部环境对你不利，卦象看到了。但逆境给你的不是一个惩罚，是一个筛选——它会淘汰那些只会顺风跑的人。你的任务是先活下来，再等风变。",
           "default": "卦象穷尽了你当前工作局面下的所有可见变量。剩下的那一小部分，叫时机。时机来的前兆，往往是你最不经意的那一天。"
         },
+        money: {
+          "比和": "你的收支目前处在一个相对平衡的状态，卦象没有看到大的波动。但平衡不代表不需要规划——趁平稳期想想哪些投入有回报，哪些只是在消耗。",
+          "体生用": "你在往某个方向持续投入，卦象看到了。但投入和消耗的区别在于：你投入的东西，是否有可见的回报通道。如果通道还不清晰，先控量。",
+          "用生体": "有一笔收入或一个机会正在向你靠近，卦象确认了。但来得快的钱花得也快——收到之后先存，别急着再投。",
+          "体克用": "你对这笔钱有掌控力，卦象认可。但掌控力容易让你高估自己的判断——特别是在已经赚到一点的时候。见好就收，比再多赚一点更难，也更重要。",
+          "用克体": "财运在压你，卦象看到了。现在的正确策略不是找机会翻盘，而是先止血。能省的省，能缓的缓，等外部条件变了再动。",
+          "default": "卦象给你的不是发财预言，是一张你当前财务态势的快照。看清现在的位置，才能判断下一步往哪走。"
+        },
+        social_invite: {
+          "比和": "你们之间的互动节奏目前是同步的，对方没有刻意疏远，也没有急着靠近。这种状态不差，但如果你想推动，主动一步不会亏。",
+          "体生用": "你这边更主动一些，卦象看到了。但社交关系里的主动是有保质期的——如果一直是你先开口、你先约，对方始终不回应，那不是TA在考虑，是TA已经回答了。",
+          "用生体": "对方可能会主动联系你，卦象显示这是有利的信号。但一次主动不等于持续在意——看TA接下来是否保持，比看这一次更重要。",
+          "体克用": "你在这段社交关系里有主动权，可以决定走不走、见不见。但社交关系不是单方面的选择题——如果你只是在筛选，也要让对方看到你值得约。",
+          "用克体": "对方现在可能不太会主动来找你，卦象看到了这个趋势。但这不代表关系结束了，只是当下不是最佳时机。先把这次放一放，不追也不躲。",
+          "default": "卦象没有给出明确的邀约信号，但也没有关闭通道。人和人之间的联系，很多时候不是等来的，是你发了那条消息之后才发生的。"
+        },
+        interpersonal: {
+          "比和": "你们之间的关系目前处在一个相对平衡的状态，没有明显的摩擦，也没有明显的亲近。这种平衡本身不是问题，但如果你想改善，需要主动制造一些正向互动。",
+          "体生用": "你在维持这段关系上付出更多，卦象看到了。但关系里的单方面付出是有期限的——如果你发现自己总是在主动、在迁就，需要想想这段关系是否对等。",
+          "用生体": "对方或外部环境在向你释放善意，卦象确认了这一点。但善意不等于信任——接受善意的同时，也要观察对方的持续行为，而不是只看这一次。",
+          "体克用": "你在这段关系里有主导权，卦象认可。但主导权不等于控制权——如果你发现自己总是在决定方向，也要给对方表达的空间，否则关系会失衡。",
+          "用克体": "对方或外部环境对你的关系不太有利，卦象看到了。但关系的冷淡不一定是谁的错，可能是节奏不同。先退一步观察，不要急着下结论。",
+          "default": "卦象给你的不是人际关系的判决书，而是一张互动模式的快照。看清现在的模式，才能决定接下来怎么调整。"
+        },
         generic: {
           "比和": "一切在正轨上，卦象没有看到需要你紧急调整的地方。但正轨和惯性只有一线之隔——你是在主动维持这个状态，还是在被动地等它继续？前者安全，后者危险。",
           "体生用": "你在推动这件事，卦象看到了你的付出。但付出到了某个点，需要回头看看：你是在往对的方向用力，还是因为已经付出了太多才不想停？两者看起来一样，实际天差地别。",
@@ -8629,30 +9171,28 @@
           "default": "卦象不会替你选择，但它会告诉你：你现在的位置，以及继续这样走下去会看到什么。如果那个画面你不喜欢，改方向还来得及。"
         }
       };
-      var scenarioPrefix = getScenarioPrefix ? getScenarioPrefix(sKey) : 'generic';
       var sceneClose = closeMap[scenarioPrefix] || closeMap.generic;
       var closeText = '';
-      var scenarioPrefixForConflict = (sKey === 'love' || sKey === 'love_general' || sKey === 'love_ambiguous' || sKey === 'love_reconcile') ? 'love' : 'generic';
-      if (typeof CORE_CONFLICT_DB !== 'undefined' && CORE_CONFLICT_DB[meta.benGuaName]) {
-        var conflictText = CORE_CONFLICT_DB[meta.benGuaName][scenarioPrefixForConflict] || CORE_CONFLICT_DB[meta.benGuaName].generic;
-        if (conflictText) { closeText = conflictText; }
-      }
-      if (!closeText) { closeText = sceneClose[tiYongType] || sceneClose.default; }
-      // 在全盘总结中结合用户问题
-      if (userQuestion && closeText) {
-        var qLower = userQuestion;
-        if (qLower.indexOf('公司') !== -1 || qLower.indexOf('面试') !== -1 || qLower.indexOf('工作') !== -1 || qLower.indexOf('靠谱') !== -1) {
-          closeText = closeText.replace(/卦象/gi, '这家公司').replace(/这件事/gi, '这家公司的机会');
-        } else if (qLower.indexOf('TA') !== -1 || qLower.indexOf('她') !== -1 || qLower.indexOf('他') !== -1 || qLower.indexOf('喜欢') !== -1 || qLower.indexOf('找我') !== -1) {
-          closeText = closeText.replace(/卦象/gi, 'TA').replace(/这件事/gi, '这段关系');
+      if (aiContent && (aiContent.finalWord || aiContent.finalSentence)) {
+        closeText = escapeHTML(aiContent.finalWord || aiContent.finalSentence);
+      } else {
+        var scenarioPrefixForConflict = (sKey === 'love' || sKey === 'love_general' || sKey === 'love_ambiguous' || sKey === 'love_reconcile') ? 'love' :
+          (sKey === 'social_invite' || sKey === 'interpersonal') ? null : 'generic';
+        if (scenarioPrefixForConflict && typeof CORE_CONFLICT_DB !== 'undefined' && CORE_CONFLICT_DB[meta.benGuaName]) {
+          var conflictText = CORE_CONFLICT_DB[meta.benGuaName][scenarioPrefixForConflict] || CORE_CONFLICT_DB[meta.benGuaName].generic;
+          if (conflictText) { closeText = conflictText; }
+        }
+        if (!closeText) { closeText = sceneClose[tiYongType] || sceneClose.default; }
+        if (userQuestion && closeText) {
+          var qLower = userQuestion;
+          if (qLower.indexOf('公司') !== -1 || qLower.indexOf('面试') !== -1 || qLower.indexOf('工作') !== -1 || qLower.indexOf('靠谱') !== -1) {
+            closeText = closeText.replace(/卦象/gi, '这家公司').replace(/这件事/gi, '这家公司的机会');
+          } else if (qLower.indexOf('TA') !== -1 || qLower.indexOf('她') !== -1 || qLower.indexOf('他') !== -1 || qLower.indexOf('喜欢') !== -1 || qLower.indexOf('找我') !== -1) {
+            closeText = closeText.replace(/卦象/gi, 'TA').replace(/这件事/gi, '这段关系');
+          }
         }
       }
-      if (sKey === 'love' && meta.benGuaName === '兑为泽' && meta.bianGuaName === '泽山咸') {
-        closeText = '兑卦主悦，咸卦主感。你们现在的聊天是轻松愉快的，但"愉快"和"心动"之间还有一层纸。第4爻说：沟通还在拉锯阶段，这不是坏事——拉锯说明双方都在试探，都在等对方先迈一步。你要做的不是急着确认关系，是在拉锯中让TA感受到你的真诚和稳定。';
-      }
-
-      var summaryContent = (aiContent && aiContent.summary) ? aiContent.summary : closeText;
-      html += '<div class="reasoning-paragraph" style="border-left-color:var(--accent);"><div class="reasoning-title" style="color:var(--accent);">全盘总结</div><p class="text-sm leading-7" style="color:var(--text-primary);">' + summaryContent + '</p></div>';
+      html += '<div class="reasoning-paragraph" style="border-left-color:var(--accent);"><div class="reasoning-title" style="color:var(--accent);">一句话</div><p class="text-sm leading-7" style="color:var(--text-primary);">' + closeText + '</p></div>';
 
       html += '</div>';
 
@@ -8749,9 +9289,82 @@
     // ===================== 分享功能 =====================
     let currentShareText = '';
 
+    function buildFullCopyText() {
+      const interpretation = window._lastInterpretation;
+      const ai = window._aiReasoning || {};
+      if (!interpretation) return currentShareText || '';
+
+      const meta = interpretation.meta || {};
+      const content = interpretation.content || {};
+      const lines = interpretation.lines || {};
+      const parts = [];
+
+      parts.push('算个der · 小事一卦');
+
+      if (meta.question) {
+        parts.push('');
+        parts.push('问题：' + meta.question);
+      }
+
+      var guaLine = (meta.benGuaName || '') + (meta.bianGuaName ? ' → ' + meta.bianGuaName : '');
+      if (guaLine.trim()) {
+        parts.push('');
+        parts.push('卦象：' + guaLine);
+      }
+
+      var tagLine = [
+        SCENARIO_RULES[meta.scenarioKey]?.label || meta.scenarioLabel || '',
+        meta.tiYongType || '',
+        meta.moveYao ? '第' + meta.moveYao + '爻' : ''
+      ].filter(Boolean).join(' · ');
+
+      if (tagLine) parts.push(tagLine);
+
+      var headline = ai.headline || meta.verdict || lines.mainLine || '';
+      var shortAnswer = ai.shortAnswer || content.relationshipState || '';
+      var risk = ai.riskBoundary || content.riskWarning || '';
+
+      if (headline) {
+        parts.push('');
+        parts.push('短断：' + headline);
+      }
+
+      if (shortAnswer) {
+        parts.push('当前局势：' + shortAnswer);
+      }
+
+      if (risk) {
+        parts.push('一句提醒：' + risk);
+      }
+
+      var deepBlocks = [
+        ['为什么是这个局', ai.mainThread || ai.deepDive],
+        ['真正卡住的地方', ai.coreConflict],
+        ['卦里怎么说', ai.guaLogic || ai.guaExplanation],
+        ['落到现实里', ai.realWorldMapping || ai.concreteAnalysis],
+        ['接下来怎么看', ai.verificationSigns || ai.timingSignals],
+        ['你现在怎么做', ai.actionStrategy || ai.strategy || ai.actionPlan],
+        ['边界和避坑', ai.riskBoundary],
+        ['一句话', ai.finalWord || ai.finalSentence]
+      ];
+
+      deepBlocks.forEach(function(block) {
+        if (!block[1]) return;
+        parts.push('');
+        parts.push(block[0] + '：');
+        parts.push(String(block[1]).trim());
+      });
+
+      parts.push('');
+      parts.push('—— 来自「算个der」');
+
+      return parts.join('\n');
+    }
+
     function copyResult() {
-      navigator.clipboard.writeText(currentShareText).then(() => {
-        showToast('已复制到剪贴板');
+      var fullText = buildFullCopyText();
+      navigator.clipboard.writeText(fullText).then(() => {
+        showToast('全文已复制');
       }).catch(() => {
         showToast('复制失败，请手动复制');
       });
@@ -8790,7 +9403,7 @@
           guaName = nameEl ? nameEl.textContent.trim() : '';
           var verdictEl = ra.querySelector('.verdict-text');
           verdict = verdictEl ? verdictEl.textContent.trim() : '';
-          summary = window._aiReasoning ? (window._aiReasoning.summary || '') : '';
+          summary = window._aiReasoning ? (window._aiReasoning.finalSentence || window._aiReasoning.finalWord || '') : '';
         }
       } catch(e) {}
 
@@ -8825,55 +9438,149 @@
       });
     }
 
-    // ===== 毒舌模式 =====
-    window._currentMode = localStorage.getItem('divinationMode') || 'normal';
+    function updateFirstScreen(ai) {
+      if (!ai) return;
 
-    function setMode(mode) {
-      window._currentMode = mode;
-      localStorage.setItem('divinationMode', mode);
-      updateModeUI(mode);
-      showToast(mode === 'dushe' ? '🗣️ 毒舌模式已开启' : '🔮 常规模式已开启');
-    }
+      if (ai.headline) {
+        var verdictEl = document.getElementById('fs-verdict');
+        if (verdictEl) {
+          var vText = clampTextForFreeLayer(ai.headline, 18);
+          verdictEl.innerHTML = '<div class="text-center" style="margin-bottom:0.8rem;"><span class="text-lg font-bold" style="color:var(--accent);">' + escapeHtml(vText) + '</span></div>';
+        }
+      }
 
-    function updateModeUI(mode) {
-      var normal = document.getElementById('modeNormal');
-      var dushe = document.getElementById('modeDushe');
-      if (!normal || !dushe) return;
-      if (mode === 'dushe') {
-        normal.style.background = 'transparent';
-        normal.style.color = 'var(--text-tertiary)';
-        normal.style.borderColor = 'rgba(201,166,107,0.1)';
-        dushe.style.background = 'rgba(200,90,74,0.1)';
-        dushe.style.color = 'var(--error)';
-        dushe.style.borderColor = 'rgba(200,90,74,0.3)';
-      } else {
-        normal.style.background = 'rgba(201,166,107,0.1)';
-        normal.style.color = 'var(--accent)';
-        normal.style.borderColor = 'rgba(201,166,107,0.25)';
-        dushe.style.background = 'transparent';
-        dushe.style.color = 'var(--text-tertiary)';
-        dushe.style.borderColor = 'rgba(180,80,60,0.15)';
+      var sitText = getFreeShortAnswer(ai, '');
+      if (sitText) {
+        var sitEl = document.getElementById('fs-situation');
+        var sitTextEl = document.getElementById('fs-situation-text');
+        if (sitEl) sitEl.style.display = '';
+        if (sitTextEl) sitTextEl.textContent = sitText;
+      }
+
+      var riskText = getFreeRiskBoundary(ai, '');
+      if (riskText) {
+        var riskEl = document.getElementById('fs-risk');
+        var riskTextEl = document.getElementById('fs-risk-text');
+        if (riskEl) riskEl.style.display = '';
+        if (riskTextEl) riskTextEl.textContent = riskText;
       }
     }
 
-    // 页面加载时恢复模式
-    (function(){
-      var savedMode = localStorage.getItem('divinationMode') || 'normal';
-      window._currentMode = savedMode;
-      window.addEventListener('DOMContentLoaded', function() {
-        updateModeUI(savedMode);
+    function generateShareCard() {
+      var ai = window._aiReasoning || {};
+      var interpretation = window._lastInterpretation;
+      var meta = interpretation ? (interpretation.meta || {}) : {};
+      var bName = meta.benGuaName || '';
+      var cName = meta.bianGuaName || '';
+      var benSym = (typeof GUA_SYMBOL_MAP !== 'undefined' && GUA_SYMBOL_MAP[bName]) || '';
+      var bianSym = (typeof GUA_SYMBOL_MAP !== 'undefined' && GUA_SYMBOL_MAP[cName]) || '';
+      var symLine = benSym + (bianSym ? ' → ' + bianSym : '');
+      var nameLine = bName + (cName ? ' → ' + cName : '');
+      var todayLine = clampTextForFreeLayer(ai.headline || ai.shortAnswer || (meta.verdict || '') || '', 18);
+      var remindLine = clampTextForFreeLayer(ai.finalWord || ai.finalSentence || '', 24);
+      var dateStr = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+
+      var shareCard = document.createElement('div');
+      shareCard.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:375px;padding:2.5rem 2rem 2rem;background:linear-gradient(160deg,#1f1a14 0%,#2a2218 50%,#1a1510 100%);border-radius:16px;font-family:"PingFang SC","Microsoft YaHei",sans-serif;color:#ece4d8;box-sizing:border-box;';
+      shareCard.innerHTML =
+        '<div style="text-align:center;">' +
+          '<div style="font-size:1.1rem;font-weight:700;color:#c9a66b;letter-spacing:0.15rem;">算个der</div>' +
+          '<div style="font-size:0.7rem;color:#6e6050;margin-top:0.25rem;letter-spacing:0.08rem;">小事一卦</div>' +
+          '<div style="margin:1.5rem 0 0.6rem;">' +
+            '<div style="font-size:2.2rem;color:#c9a66b;letter-spacing:0.3rem;">' + escapeHtml(symLine || '☯') + '</div>' +
+            '<div style="font-size:0.8rem;color:#a89880;margin-top:0.3rem;">' + escapeHtml(nameLine) + '</div>' +
+          '</div>' +
+          '<div style="margin:1.2rem 0;">' +
+            (todayLine ? '<div style="font-size:0.72rem;color:#8a7a68;margin-bottom:0.3rem;">今日这一卦：</div>' +
+            '<div style="font-size:1.05rem;font-weight:600;color:#ece4d8;line-height:1.7;">' + escapeHtml(todayLine) + '</div>' : '') +
+          '</div>' +
+          (remindLine && remindLine !== todayLine ?
+            '<div style="margin:0.8rem 0;">' +
+              '<div style="font-size:0.72rem;color:#8a7a68;margin-bottom:0.3rem;">一句提醒：</div>' +
+              '<div style="font-size:0.85rem;color:#a89880;line-height:1.7;">' + escapeHtml(remindLine) + '</div>' +
+            '</div>' : '') +
+          '<div style="border-top:1px solid rgba(201,166,107,0.1);padding-top:1rem;margin-top:1.5rem;">' +
+            '<div style="font-size:0.7rem;color:#6e6050;">' + escapeHtml(dateStr) + '</div>' +
+            '<div style="font-size:0.72rem;color:#c9a66b;margin-top:0.4rem;letter-spacing:0.05rem;">也来算个der</div>' +
+          '</div>' +
+        '</div>';
+      document.body.appendChild(shareCard);
+
+      if (typeof html2canvas === 'undefined') {
+        document.body.removeChild(shareCard);
+        showToast('图片生成功能暂不可用');
+        return;
+      }
+      html2canvas(shareCard, { backgroundColor: null, scale: 2, useCORS: true }).then(function(canvas) {
+        document.body.removeChild(shareCard);
+        var link = document.createElement('a');
+        link.download = '算个der_' + new Date().toISOString().slice(0,10) + '.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('卡片已保存');
+      }).catch(function(err) {
+        document.body.removeChild(shareCard);
+        showToast('生成失败，请截图分享');
       });
-    })();
+    }
+
+    function saveToMyRecords() {
+      showToast('已存入记录，可随时复盘');
+    }
+
+    function askAnother() {
+      clearInput();
+    }
+
+    function setReviewReminder(days) {
+      try {
+        var reminders = JSON.parse(localStorage.getItem('reviewReminders') || '[]');
+        var interpretation = window._lastInterpretation;
+        var meta = interpretation ? (interpretation.meta || {}) : {};
+        var ai = window._aiReasoning || {};
+        reminders.push({
+          id: Date.now(),
+          triggerAt: Date.now() + days * 86400000,
+          days: days,
+          question: meta.question || '',
+          benGuaName: meta.benGuaName || '',
+          verdict: ai.headline || ai.shortAnswer || meta.verdict || '',
+          finalWord: ai.finalWord || ai.finalSentence || ''
+        });
+        if (reminders.length > 50) reminders = reminders.slice(-50);
+        localStorage.setItem('reviewReminders', JSON.stringify(reminders));
+        showToast(days + '天后会提醒你回来看看');
+      } catch(e) {
+        showToast('设置失败');
+      }
+    }
+
+    function checkReviewReminders() {
+      try {
+        var reminders = JSON.parse(localStorage.getItem('reviewReminders') || '[]');
+        var now = Date.now();
+        var pending = reminders.filter(function(r) { return r.triggerAt <= now; });
+        if (pending.length > 0) {
+          var r = pending[pending.length - 1];
+          var tipText = r.days + '天前你问过："' + (r.question || '').slice(0, 20) + '"，当时说：' + (r.verdict || '').slice(0, 25) + '。回头看看准不准？';
+          setTimeout(function() { showToast(tipText); }, 2000);
+          reminders = reminders.filter(function(r) { return r.triggerAt > now; });
+          localStorage.setItem('reviewReminders', JSON.stringify(reminders));
+        }
+      } catch(e) {}
+    }
+
+    window._currentMode = 'normal';
 
     // ===== 今日宜问 =====
     function getTodayRec() {
       var scenarios = [
-        { key: 'love', label: '感情 ❤️', question: '最近感情有什么变化' },
-        { key: 'career', label: '事业 💼', question: '现在的工作方向对不对' },
-        { key: 'wealth', label: '财运 💰', question: '最近财运如何' },
-        { key: 'study', label: '学业 📚', question: '学习上的困惑怎么解' },
-        { key: 'health', label: '健康 🏥', question: '身体有什么需要注意的' },
-        { key: 'lost', label: '失物 🔍', question: '丢了的东西还能找到吗' }
+        { key: 'love', label: '感情', question: '最近感情有什么变化' },
+        { key: 'career', label: '事业', question: '现在的工作方向对不对' },
+        { key: 'wealth', label: '财运', question: '最近财运如何' },
+        { key: 'study', label: '学业', question: '学习上的困惑怎么解' },
+        { key: 'health', label: '健康', question: '身体有什么需要注意的' },
+        { key: 'lost', label: '失物', question: '丢了的东西还能找到吗' }
       ];
       var today = new Date();
       var seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
@@ -8895,7 +9602,7 @@
           tab.style.fontWeight = '600';
         }
       });
-      var qi = document.getElementById('questionInput');
+      var qi = document.getElementById('question');
       if (qi) qi.value = rec.question;
     }
     window.addEventListener('DOMContentLoaded', function() {
@@ -8982,8 +9689,15 @@
       setTimeout(checkMonthlyReport, 1000);
     });
 
+    let _toastTimer = null;
+
     function showToast(message) {
+      const oldToast = document.getElementById('appToast');
+      if (oldToast) oldToast.remove();
+      if (_toastTimer) clearTimeout(_toastTimer);
+
       const toast = document.createElement('div');
+      toast.id = 'appToast';
       toast.textContent = message;
       toast.style.cssText = `
         position: fixed;
@@ -8992,14 +9706,23 @@
         transform: translateX(-50%);
         background: var(--card-bg);
         color: var(--text-primary);
-        padding: 12px 24px;
-        border-radius: 12px;
-        font-size: 14px;
+        padding: 10px 18px;
+        border-radius: 999px;
+        font-size: 13px;
         z-index: 1000;
-        animation: fadeInUp 0.3s ease;
+        border: 1px solid rgba(201,166,107,0.16);
+        box-shadow: 0 10px 28px rgba(0,0,0,0.22);
+        animation: fadeInUp 0.25s ease;
+        max-width: min(82vw, 320px);
+        text-align: center;
+        line-height: 1.5;
       `;
       document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 2000);
+
+      _toastTimer = setTimeout(() => {
+        toast.remove();
+        _toastTimer = null;
+      }, 1800);
     }
 
     // ===================== Tab 切换 =====================
@@ -9048,6 +9771,7 @@
 
     // ===================== 初始化 =====================
     function safeInit() {
+      try { runStartupDiagnostics(); } catch(e) { console.error('init diagnostics:', e); }
       try {
         const methodSelect = document.getElementById('defaultMethod');
         if (methodSelect) methodSelect.addEventListener('change', saveSettings);
@@ -9061,6 +9785,7 @@
         document.getElementById('nav-collection').addEventListener('click', function() { switchTab('collection'); });
         document.getElementById('nav-settings').addEventListener('click', function() { switchTab('settings'); });
       } catch(e) { console.error('init navButtons:', e); }
+      try { checkReviewReminders(); } catch(e) {}
     }
     document.addEventListener('DOMContentLoaded', safeInit);
 
@@ -9141,12 +9866,12 @@
           var gName = guaList[i];
           var isUnlocked = unlocked.indexOf(gName) !== -1;
           if (isUnlocked) gongUnlocked++;
-          var shortName = gName.length === 3 ? gName.slice(1) : gName;
+          var shortName = gName;
           var timeStr = data.unlockTimes && data.unlockTimes[gName] ? data.unlockTimes[gName] : '';
-          gongHtml += '<div class="collection-cell ' + (isUnlocked ? 'unlocked' : 'locked') + '" onclick="showGuaDetail(\'' + gName + '\',' + isUnlocked + ',\'' + timeStr + '\')" style="width:25%;padding:0.4rem 0.2rem;text-align:center;cursor:pointer;"><div style="' + (isUnlocked ? 'color:var(--accent);text-shadow:0 0 6px rgba(201,166,107,0.3);' : 'color:rgba(180,140,100,0.2);') + 'font-size:1.1rem;line-height:1.2;font-weight:bold;">' + (GUA_SYMBOL_MAP[gName] || '☯') + '<br><span style="font-weight:normal;font-size:0.65rem;display:block;line-height:1.3;margin-top:0.15rem;color:' + (isUnlocked ? 'var(--text-secondary)' : 'rgba(180,140,100,0.15)') + ';">' + shortName + '</span></div></div>';
+          gongHtml += '<div class="collection-cell ' + (isUnlocked ? 'unlocked' : 'locked') + '" onclick="showGuaDetail(\'' + gName + '\',' + isUnlocked + ',\'' + timeStr + '\')" style="width:25%;padding:0.4rem 0.1rem;text-align:center;cursor:pointer;"><div style="' + (isUnlocked ? 'color:var(--accent);text-shadow:0 0 6px rgba(201,166,107,0.3);' : 'color:rgba(180,140,100,0.2);') + 'font-size:1.05rem;line-height:1.15;font-weight:bold;">' + (GUA_SYMBOL_MAP[gName] || '☯') + '<br><span class="collection-cell-name" style="color:' + (isUnlocked ? 'var(--text-secondary)' : 'rgba(180,140,100,0.15)') + ';">' + shortName + '</span></div></div>';
         }
         var gongComplete = gongUnlocked === 8;
-        html += '<div style="margin:0 0.75rem 0.75rem;border:1px solid rgba(180,140,100,0.08);border-radius:8px;padding:0.5rem;background:rgba(30,24,16,0.3);"><div style="display:flex;justify-content:space-between;align-items:center;padding:0.2rem 0.25rem 0.5rem;"><span style="font-size:0.75rem;color:' + (gongComplete ? 'var(--accent)' : 'var(--text-primary)') + ';font-weight:500;">' + gongName + ' <span style="font-size:0.6rem;opacity:0.6;">' + gongUnlocked + '/8</span></span><span style="font-size:0.55rem;margin-left:0.4rem;' + (gongComplete ? 'color:var(--accent);' : 'color:rgba(180,140,100,0.25);') + '">🏆 ' + titleMap[gongName] + '</span>' + (gongComplete ? '' : '') + '</div><div style="display:flex;flex-wrap:wrap;">' + gongHtml + '</div></div>';
+        html += '<div style="margin:0 0.75rem 0.75rem;border:1px solid rgba(180,140,100,0.08);border-radius:8px;padding:0.5rem;background:rgba(30,24,16,0.3);"><div style="display:flex;justify-content:space-between;align-items:center;padding:0.2rem 0.25rem 0.5rem;"><span style="font-size:0.75rem;color:' + (gongComplete ? 'var(--accent)' : 'var(--text-primary)') + ';font-weight:500;">' + gongName + ' <span style="font-size:0.6rem;opacity:0.6;">' + gongUnlocked + '/8</span></span><span style="font-size:0.55rem;margin-left:0.4rem;' + (gongComplete ? 'color:var(--accent);' : 'color:rgba(180,140,100,0.25);') + '">' + titleMap[gongName] + '</span>' + (gongComplete ? '' : '') + '</div><div style="display:flex;flex-wrap:wrap;">' + gongHtml + '</div></div>';
       }
       var titles = [];
       var unlockedGongCount = 0;
@@ -9163,7 +9888,7 @@
       if (unlockedCount >= 32) titles.push('见局者');
       if (unlockedCount >= 64) titles.push('观变之人');
       if (titles.length > 0) {
-        html += '<div style="margin:0.75rem;padding:0.75rem;border-top:1px solid rgba(180,140,100,0.1);"><div style="font-size:0.7rem;color:var(--text-secondary);margin-bottom:0.5rem;">🏆 称号</div><div style="display:flex;flex-wrap:wrap;gap:0.4rem;">';
+        html += '<div style="margin:0.75rem;padding:0.75rem;border-top:1px solid rgba(180,140,100,0.1);"><div style="font-size:0.7rem;color:var(--text-secondary);margin-bottom:0.5rem;">称号</div><div style="display:flex;flex-wrap:wrap;gap:0.4rem;">';
         for (var t = 0; t < titles.length; t++) {
           html += '<span style="font-size:0.7rem;color:var(--accent);background:rgba(201,166,107,0.08);padding:0.25rem 0.6rem;border-radius:4px;border:1px solid rgba(201,166,107,0.15);">' + titles[t] + '</span>';
         }
@@ -9182,14 +9907,14 @@
 
     function showGuaDetail(guaName, isUnlocked, timeStr) {
       if (!isUnlocked) {
-        showToast('🔒 尚未解锁「' + guaName + '」');
+        showToast('尚未解锁「' + guaName + '」');
         return;
       }
-      showToast('📜 「' + guaName + '」' + (timeStr ? ' — ' + timeStr + ' 解锁' : ''));
+      showToast('「' + guaName + '」' + (timeStr ? ' — ' + timeStr + ' 解锁' : ''));
     }
 
     function saveToHistory(interpretation) {
-      if (!interpretation || !interpretation.meta) return;
+      if (!interpretation || !interpretation.meta) return null;
       const history = getHistory();
       const record = {
         id: Date.now(),
@@ -9202,6 +9927,20 @@
       };
       history.unshift(record);
       if (history.length > MAX_HISTORY) history.splice(MAX_HISTORY);
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      return record.id;
+    }
+
+    function updateHistoryItem(historyId, interpretation) {
+      if (!historyId || !interpretation) return;
+      const history = getHistory();
+      for (var i = 0; i < history.length; i++) {
+        if (history[i].id === historyId) {
+          history[i].interpretation = interpretation;
+          history[i].mainLine = interpretation.lines?.mainLine || history[i].mainLine;
+          break;
+        }
+      }
       localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
     }
 
@@ -9464,15 +10203,19 @@
       const step3 = document.getElementById('loadingStep3');
       const step4 = document.getElementById('loadingStep4');
 
-      if (mask) mask.classList.add('active');
+      if (mask) {
+        mask.hidden = false;
+        mask.setAttribute('aria-hidden', 'false');
+        mask.classList.add('active');
+      }
       if (bar) bar.style.width = '0%';
       if (progressTrack) progressTrack.setAttribute('aria-valuenow', '0');
 
       const stages = [
-        { stage: '起局中...', subtext: '正在收拢这次问题里的关键气口', step: 1 },
-        { stage: '校势中...', subtext: '正在定位当前关系的核心张力', step: 2 },
-        { stage: '推演中...', subtext: '正在模拟关系发展的多种可能', step: 3 },
-        { stage: '收束中...', subtext: '正在整合为最终的判断输出', step: 4 }
+        { stage: '起局中...', subtext: '把这件小事放进去', step: 1 },
+        { stage: '校势中...', subtext: '看谁在用力，谁在观望', step: 2 },
+        { stage: '推演中...', subtext: '顺着卦象走一遍后路', step: 3 },
+        { stage: '收束中...', subtext: '把话说短一点，别绕', step: 4 }
       ];
       const guaSymbols = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷'];
       let progress = 0;
@@ -9536,13 +10279,19 @@
       const progressTrack = mask ? mask.querySelector('.progress-track') : null;
       if (bar) bar.style.width = '100%';
       if (progressTrack) progressTrack.setAttribute('aria-valuenow', '100');
-      if (mask) setTimeout(() => mask.classList.remove('active'), 300);
+      if (mask) {
+        setTimeout(() => {
+          mask.classList.remove('active');
+          mask.setAttribute('aria-hidden', 'true');
+          mask.hidden = true;
+        }, 300);
+      }
     }
 
     function scrollToResult() {
       const ra = document.getElementById('resultArea');
       if (ra && !ra.classList.contains('hidden')) {
-        ra.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0, 0); }
       }
     }
 
@@ -9571,7 +10320,12 @@
 
 // ========== [S5] 交互层：事件绑定 + API调用 ==========
     // ===================== 主函数 =====================
+    var _isDeriving = false;
     function derOnce() {
+      if (_isDeriving) {
+        showToast("正在推演中，请稍等片刻");
+        return;
+      }
       window._aiVerdict = undefined;
       window._aiReasoning = null;
       window._aiFallback = undefined;
@@ -9591,16 +10345,19 @@
       const num2 = parseInt(num2Val, 10);
 
       if (!question) {
-        showToast('先写下你想der啥事儿');
+        showToast('先把此刻最纠结的问题写下来');
         questionInput?.focus();
         return;
       }
       if (!num1Val || !num2Val || isNaN(num1) || isNaN(num2) || num1 < 1 || num1 > 8 || num2 < 1 || num2 > 8) {
-        showToast('数字得填1~8之间');
+        showToast('数字得填 1 到 8 就行');
         if (num1 < 1 || num1 > 8 || isNaN(num1)) num1Input?.focus();
         else num2Input?.focus();
         return;
       }
+
+      _isDeriving = true;
+      try { document.activeElement && document.activeElement.blur(); } catch(e) {}
 
       let timer;
       try {
@@ -9666,6 +10423,20 @@
                 "体克用": "体克用通常意味着当事人有主导能力，但需要注意控制力度，避免过犹不及。",
                 "用克体": "用克体通常意味着外部环境对当事人不利，硬冲容易碰壁，需要以守为攻。",
                 "比和": "比和意味着当事人和外部环境之间没有明显的对抗，局面相对平衡。"
+              },
+              "social_invite": {
+                "体生用": "你更主动地发起互动，但对方的回应节奏没有跟上——不是拒绝，更像被动接受。",
+                "用生体": "对方可能有主动靠近的意愿，但还没转化为实际邀约。等TA迈出第一步。",
+                "体克用": "你在社交关系里有主动权，可以决定节奏。但控制太紧会让对方有压力。",
+                "用克体": "对方目前的互动意愿偏弱，主动邀约的成功率不高。先退一步。",
+                "比和": "双方节奏接近，关系可维持但推进慢。轻量试探比大动作更合适。"
+              },
+              "interpersonal": {
+                "体生用": "你在这段关系里付出更多，关系的维持更多依赖你的主动。",
+                "用生体": "对方或外部环境在给你善意，但善意和深入互动之间还有距离。",
+                "体克用": "你想掌控关系方向，但对方未必完全认同。注意留空间。",
+                "用克体": "对方的态度或外部条件对你形成压力，这段关系里你更被动。",
+                "比和": "双方状态接近，关系平稳但缺少突破点。"
               }
             };
 
@@ -9673,137 +10444,468 @@
             const translationMap = tiYongTranslations[scenarioForTranslation] || tiYongTranslations.generic;
             const tiYongSceneExplanation = translationMap[interpretation.meta.tiYongType] || "";
 
-            // ========== 先获取 AI 核心判断 ==========
-            const workerURL = "https://bitter-scene-172b.w2286971650.workers.dev";
+            // ========== A14: 判断包 + AI校验/合并 ==========
+            var AI_SCENARIO_TONE = {
+              love_ambiguous: { focus: "暧昧关系、对方态度、推进节奏", tone: "细腻、克制、贴近具体问题，但不要替用户上头" },
+              love_reconcile: { focus: "复合可能、旧关系阻力、对方是否回头", tone: "温柔但清醒，不制造虚假希望" },
+              career: { focus: "机会、压力、上级关系、项目走向", tone: "理性、干脆、有决策感" },
+              money: { focus: "财运趋势、投入产出、风险控制", tone: "谨慎、务实，不承诺收益" },
+              study: { focus: "学习策略、备考节奏、薄弱环节", tone: "冷静、有针对性" },
+              health: { focus: "身体信号、作息调整、风险预警", tone: "温和、务实，不过度吓人" },
+              lost: { focus: "物品去向、可能位置、找回概率", tone: "直接、干脆" },
+              interpersonal: { focus: "人际关系中的互动模式、误会、合作、边界感", tone: "清醒、稳、少读心、按行为信号判断，不要直接断言对方内心" },
+              social_invite: { focus: "朋友邀约、社交动向、对方近期主动概率", tone: "轻松、实际，不要写成恋爱暗示，不要直接读心" },
+              general: { focus: "当前处境、变化趋势、行动建议", tone: "稳重、清楚、可执行" }
+            };
 
-            // 先用规则引擎渲染基础结果（用户立刻看到内容）
-            window._aiReasoning = null;
+            function buildJudgmentPacket(result, interpretation, userQuestion, scenarioKey) {
+              return {
+                question: userQuestion || "",
+                scenario: scenarioKey || "general",
+                toneGuide: AI_SCENARIO_TONE[scenarioKey] || AI_SCENARIO_TONE.general,
+                guaFacts: {
+                  benGuaName: result.benGuaName,
+                  bianGuaName: result.bianGuaName,
+                  huGuaName: result.huGuaName || "",
+                  moveYao: result.moveYao,
+                  ti: result.ti && result.ti.name,
+                  yong: result.yong && result.yong.name,
+                  tiEle: result.ti && result.ti.ele,
+                  yongEle: result.yong && result.yong.ele,
+                  relation: interpretation.meta.tiYongType
+                },
+                ruleJudgment: {
+                  tendency: interpretation.meta.tendency || interpretation.lines.mainLine || "中性偏观察",
+                  confidence: interpretation.meta.confidence || 60,
+                  stage: interpretation.meta.stage || interpretation.lines.stageLine || "",
+                  coreSignal: interpretation.meta.coreSignal || "",
+                  risk: interpretation.meta.riskWarning || "",
+                  advice: interpretation.meta.advice || interpretation.lines.introHint || ""
+                },
+                contentSeeds: {
+                  benSummary: interpretation.content.relationshipState || "",
+                  bianSummary: interpretation.content.trend || "",
+                  huSummary: interpretation.content.releaseCondition || "",
+                  highFreqHit: null,
+                  interpersonalArchetype: (scenarioKey === "social_invite" || scenarioKey === "interpersonal") ? getInterpersonalArchetype(interpretation.meta.tiYongType, result.moveYao, result.bianGuaName) : null
+                },
+                aiBoundary: {
+                  canRewrite: true,
+                  canAddEmotionalInsight: true,
+                  canPersonalizeToQuestion: true,
+                  cannotChangeGuaNames: true,
+                  cannotChangeMoveYao: true,
+                  cannotReverseTendency: true,
+                  cannotMakeAbsolutePromise: true
+                }
+              };
+            }
+
+            var AI_REQUIRED_FIELDS = [
+              "headline", "shortAnswer", "mainThread", "coreConflict",
+              "guaLogic", "realWorldMapping", "actionStrategy", "finalWord"
+            ];
+
+            var AI_RECOMMENDED_FIELDS = ["verificationSigns", "riskBoundary"];
+
+            function patchMissingAiRecommendedFields(ai) {
+              if (!ai || typeof ai !== "object") return ai;
+              if (!ai.verificationSigns) {
+                ai.verificationSigns = "接下来重点看现实反馈是否连续，不要只凭一时感觉下判断。";
+              }
+              if (!ai.riskBoundary) {
+                ai.riskBoundary = "先别急着把话说死。";
+              }
+              return ai;
+            }
+
+            function validateAiInterpretation(ai) {
+              if (!ai || typeof ai !== "object") return false;
+              return AI_REQUIRED_FIELDS.every(function(field) {
+                return typeof ai[field] === "string" && ai[field].trim().length > 0;
+              });
+            }
+
+            function normalizeAiInterpretation(ai) {
+              var shortAnswer = ai.shortAnswer || ai.directAnswer || "";
+              var mainThread = ai.mainThread || ai.deepDive || "";
+              var coreConflict = ai.coreConflict || "";
+              var guaLogic = ai.guaLogic || ai.guaExplanation || "";
+              var realWorldMapping = ai.realWorldMapping || ai.concreteAnalysis || "";
+              var verificationSigns = ai.verificationSigns || ai.timingSignals || ai.trend || "";
+              var actionStrategy = ai.actionStrategy || ai.strategy || ai.actionPlan || ai.advice || "";
+              var riskBoundary = ai.riskBoundary || ai.warning || "";
+              var finalWord = ai.finalWord || ai.finalSentence || "";
+              return {
+                headline: String(ai.headline || "").trim(),
+                shortAnswer: String(shortAnswer).trim(),
+                mainThread: String(mainThread).trim(),
+                coreConflict: String(coreConflict).trim(),
+                guaLogic: String(guaLogic).trim(),
+                realWorldMapping: String(realWorldMapping).trim(),
+                verificationSigns: String(verificationSigns).trim(),
+                actionStrategy: String(actionStrategy).trim(),
+                riskBoundary: String(riskBoundary).trim(),
+                finalWord: String(finalWord).trim(),
+                directAnswer: String(shortAnswer).trim(),
+                emotionalReading: String(ai.emotionalReading || "").trim(),
+                guaExplanation: String(guaLogic).trim(),
+                trend: String(verificationSigns).trim(),
+                advice: String(actionStrategy).trim(),
+                warning: String(riskBoundary).trim(),
+                finalSentence: String(finalWord).trim(),
+                deepDive: String(mainThread).trim(),
+                concreteAnalysis: String(realWorldMapping).trim(),
+                strategy: String(actionStrategy).trim(),
+                actionPlan: String(actionStrategy).trim(),
+                timingSignals: String(verificationSigns).trim()
+              };
+            }
+
+            function detectAiConflict(ruleInterpretation, aiInterpretation) {
+              var tendency = (ruleInterpretation && ruleInterpretation.meta && (ruleInterpretation.meta.tendency || ruleInterpretation.lines && ruleInterpretation.lines.mainLine)) || "";
+              var negativeWords = ["没机会", "不会成功", "彻底结束", "不要继续"];
+              var positiveWords = ["很有机会", "可以推进", "会成功", "值得继续"];
+              var aiText = "";
+              if (aiInterpretation) {
+                var vals = [];
+                for (var k in aiInterpretation) {
+                  if (typeof aiInterpretation[k] === "string") vals.push(aiInterpretation[k]);
+                }
+                aiText = vals.join("");
+              }
+              if (tendency.indexOf("偏吉") !== -1 || tendency.indexOf("可推进") !== -1) {
+                return negativeWords.some(function(w) { return aiText.indexOf(w) !== -1; });
+              }
+              if (tendency.indexOf("偏凶") !== -1 || tendency.indexOf("不宜推进") !== -1) {
+                return positiveWords.some(function(w) { return aiText.indexOf(w) !== -1; });
+              }
+              return false;
+            }
+
+            function mergeRuleAndAiInterpretation(ruleInterpretation, aiInterpretation) {
+              if (!validateAiInterpretation(aiInterpretation)) {
+                return { aiEnhanced: false };
+              }
+              if (detectAiConflict(ruleInterpretation, aiInterpretation)) {
+                console.warn("[AI 解读与本地规则冲突，已回退本地解读]");
+                return { aiEnhanced: false, aiConflict: true };
+              }
+              var ai = normalizeAiInterpretation(aiInterpretation);
+              return {
+                headline: ai.headline,
+                shortAnswer: ai.shortAnswer,
+                mainThread: ai.mainThread,
+                coreConflict: ai.coreConflict,
+                guaLogic: ai.guaLogic,
+                realWorldMapping: ai.realWorldMapping,
+                verificationSigns: ai.verificationSigns,
+                actionStrategy: ai.actionStrategy,
+                riskBoundary: ai.riskBoundary,
+                finalWord: ai.finalWord,
+                directAnswer: ai.directAnswer,
+                emotionalReading: ai.emotionalReading,
+                guaExplanation: ai.guaExplanation,
+                trend: ai.trend,
+                advice: ai.advice,
+                warning: ai.warning,
+                finalSentence: ai.finalSentence,
+                deepDive: ai.deepDive,
+                concreteAnalysis: ai.concreteAnalysis,
+                strategy: ai.strategy,
+                actionPlan: ai.actionPlan,
+                timingSignals: ai.timingSignals,
+                aiEnhanced: true
+              };
+            }
+
+            function sanitizeInterpersonalAi(merged, scenarioKey) {
+              if (scenarioKey !== "social_invite" && scenarioKey !== "interpersonal") return merged;
+              var safeMap = [
+                [/她不在乎你/g, "对方目前没有表现出强主动性"],
+                [/你对她?可有可无/g, "你暂时不是对方这次互动的高优先级对象"],
+                [/她?没兴趣/g, "目前还看不到明显推进意愿"],
+                [/她?只是礼貌/g, "对方的回应更偏维持基本互动"],
+                [/她?不会主动找你/g, "主动邀约的概率偏低"],
+                [/关系没戏/g, "这段互动暂时缺少继续升温的信号"],
+                [/别幻想了/g, "不建议把一次回应解读得过重"],
+                [/她?心里没有你/g, "目前看不到对方有深入互动的信号"],
+                [/你不够重要/g, "你暂时不在对方的优先互动列表里"]
+              ];
+              var fields = ["shortAnswer", "mainThread", "coreConflict", "guaLogic", "realWorldMapping", "verificationSigns", "actionStrategy", "riskBoundary", "finalWord", "directAnswer", "emotionalReading", "headline", "trend", "advice", "warning", "finalSentence"];
+              for (var fi = 0; fi < fields.length; fi++) {
+                var val = merged[fields[fi]];
+                if (typeof val !== "string") continue;
+                for (var si = 0; si < safeMap.length; si++) {
+                  val = val.replace(safeMap[si][0], safeMap[si][1]);
+                }
+                merged[fields[fi]] = val;
+              }
+              return merged;
+            }
+
+            function sanitizeMoneyAi(merged, scenarioKey) {
+              if (scenarioKey !== "money") return merged;
+              var moneyDanger = [
+                [/一定赚钱/g, "有收益潜力但需要验证"],
+                [/必有横财/g, "有进账可能但不要过度期待"],
+                [/稳赚/g, "目前看有一定基础"],
+                [/放心投/g, "可以小额观察"],
+                [/大胆加仓/g, "建议分批试探"],
+                [/保证收益/g, "收益取决于后续验证"],
+                [/稳赚不赔/g, "有基础但也有变数"],
+                [/必赚/g, "有空间但要控制投入"]
+              ];
+              var fields = ["shortAnswer", "mainThread", "coreConflict", "guaLogic", "realWorldMapping", "verificationSigns", "actionStrategy", "riskBoundary", "finalWord", "headline", "trend", "advice", "warning", "finalSentence"];
+              for (var fi = 0; fi < fields.length; fi++) {
+                var val = merged[fields[fi]];
+                if (typeof val !== "string") continue;
+                for (var si = 0; si < moneyDanger.length; si++) {
+                  val = val.replace(moneyDanger[si][0], moneyDanger[si][1]);
+                }
+                merged[fields[fi]] = val;
+              }
+              var riskWords = /止损|分批|小额|先小后大|现金流|风控|控制投入/;
+              if (!riskWords.test(merged.actionStrategy || "")) {
+                merged.actionStrategy = (merged.actionStrategy ? merged.actionStrategy + " " : "") + "涉及投入时先小额验证，保留止损线，别影响现金流。";
+              }
+              if (!riskWords.test(merged.riskBoundary || "")) {
+                merged.riskBoundary = (merged.riskBoundary ? merged.riskBoundary + " " : "") + "别重仓，先看风控。";
+              }
+              return merged;
+            }
+
+            function sanitizeHealthAi(merged, scenarioKey) {
+              if (scenarioKey !== "health") return merged;
+              var healthDanger = [
+                [/你没病/g, "目前没有明确的异常信号"],
+                [/不会生病/g, "身体底子尚可，注意保持"],
+                [/不用担心/g, "建议关注身体反馈"],
+                [/不用看医生/g, "如有不适建议专业检查"],
+                [/一定会好/g, "有改善的倾向"],
+                [/这是大病/g, "需要关注身体信号"],
+                [/会出事/g, "需要注意日常调理"],
+                [/不用管它/g, "建议保持观察"],
+                [/不用吃药/g, "具体用药请遵医嘱"]
+              ];
+              var fields = ["shortAnswer", "mainThread", "coreConflict", "guaLogic", "realWorldMapping", "verificationSigns", "actionStrategy", "riskBoundary", "finalWord", "headline", "trend", "advice", "warning", "finalSentence"];
+              for (var fi = 0; fi < fields.length; fi++) {
+                var val = merged[fields[fi]];
+                if (typeof val !== "string") continue;
+                for (var si = 0; si < healthDanger.length; si++) {
+                  val = val.replace(healthDanger[si][0], healthDanger[si][1]);
+                }
+                merged[fields[fi]] = val;
+              }
+              if (!merged.riskBoundary || !merged.riskBoundary.includes("专业检查")) {
+                merged.riskBoundary = (merged.riskBoundary ? merged.riskBoundary + " " : "") + "如有不适，优先以专业检查为准。";
+              }
+              return merged;
+            }
+
+            // ========== A15: AI 稳定性基础设施 ==========
+            var AI_STATUS = { IDLE: "idle", LOADING: "loading", SUCCESS: "success", TIMEOUT: "timeout", ERROR: "error", INVALID: "invalid", FALLBACK: "fallback" };
+            var DEBUG_AI = false;
+            function debugLog() { if (!DEBUG_AI) return; console.log.apply(console, arguments); }
+
+            function fetchWithTimeout(url, options, timeout) {
+              timeout = timeout || 22000;
+              var controller = new AbortController();
+              var timer = setTimeout(function() { controller.abort(); }, timeout);
+              var mergedOpts = {};
+              for (var k in options) { if (options.hasOwnProperty(k)) mergedOpts[k] = options[k]; }
+              mergedOpts.signal = controller.signal;
+              return fetch(url, mergedOpts).finally(function() { clearTimeout(timer); });
+            }
+
+            function parseAiJson(rawText) {
+              if (!rawText || typeof rawText !== "string") return null;
+              var text = rawText.trim()
+                .replace(/^```json\s*/i, "")
+                .replace(/^```\s*/i, "")
+                .replace(/```$/i, "")
+                .trim();
+              try { return JSON.parse(text); } catch(e) {}
+              var match = text.match(/\{[\s\S]*\}/);
+              if (!match) { console.warn("[AI JSON 解析失败：未找到 JSON 对象]"); return null; }
+              try { return JSON.parse(match[0]); } catch(e2) { console.warn("[AI JSON 解析失败]", e2.message); return null; }
+            }
+
+            function fallbackMarkerParse(aiReply) {
+              var markerPrefixes = ['【深推主线', '【关键矛盾', '【卦象拆解', '【现实落点', '【行动策略', '【一语定局', '【免费'];
+              var fieldNames = ['mainThread', 'coreConflict', 'guaLogic', 'realWorldMapping', 'actionStrategy', 'finalWord', 'freeVersion'];
+              var found = [];
+              for (var mi = 0; mi < markerPrefixes.length; mi++) {
+                var idx = aiReply.indexOf(markerPrefixes[mi]);
+                if (idx !== -1) {
+                  var closeIdx = aiReply.indexOf('】', idx);
+                  if (closeIdx === -1) closeIdx = idx + markerPrefixes[mi].length;
+                  found.push({ pos: idx, contentStart: closeIdx + 1, field: fieldNames[mi] });
+                }
+              }
+              if (found.length === 0) return null;
+              found.sort(function(a, b) { return a.pos - b.pos; });
+              var aiReport = {};
+              for (var fi = 0; fi < found.length; fi++) {
+                var start = found[fi].contentStart;
+                var end = (fi < found.length - 1) ? found[fi + 1].pos : aiReply.length;
+                aiReport[found[fi].field] = aiReply.slice(start, end).trim();
+              }
+              if (!aiReport.mainThread) return null;
+              return {
+                headline: (aiReport.mainThread || '').split(/[。！？]/)[0].slice(0, 20),
+                shortAnswer: aiReport.mainThread ? aiReport.mainThread.slice(0, 40) : '',
+                mainThread: aiReport.mainThread || '',
+                coreConflict: aiReport.coreConflict || '',
+                guaLogic: aiReport.guaLogic || '',
+                realWorldMapping: aiReport.realWorldMapping || '',
+                verificationSigns: '',
+                actionStrategy: aiReport.actionStrategy || '',
+                riskBoundary: '',
+                finalWord: aiReport.finalWord || '',
+                directAnswer: aiReport.mainThread ? aiReport.mainThread.slice(0, 40) : '',
+                emotionalReading: '',
+                guaExplanation: aiReport.guaLogic || '',
+                trend: '',
+                advice: aiReport.actionStrategy || '',
+                warning: '',
+                finalSentence: aiReport.finalWord || '',
+                freeVersion: aiReport.freeVersion || null,
+                _markerFallback: true
+              };
+            }
+
+            function getDepthTemplate(scenario) {
+              var base = '【反重复规则】每个深度字段必须提供不同的信息维度。如果 mainThread 讲了"宜守"，coreConflict 就要讲"为什么会想攻、攻会卡在哪里"。';
+              if (scenario === "love" || scenario === "love_reconcile" || scenario === "love_general" || scenario === "love_ambiguous") {
+                return '【感情深度】重点不是"能不能成"，而是：关系位置、对方主动性、你是否过度投入、什么时候该推进什么时候该收。mainThread 多写暧昧结构、互动节奏。coreConflict 点出卡在对方不主动还是你太急。realWorldMapping 落到聊天、见面、回应速度。verificationSigns 看对方是否主动开启话题、是否愿意见面。actionStrategy 给轻量试探、暂停投入等动作。\n' + base;
+              }
+              if (scenario === "money") {
+                return '【财运深度】重点不是"发财/不发财"，而是：钱从哪来、风险在哪、该守现金流还是扩张。mainThread 多写投入产出、止损线。coreConflict 点出卡在机会、判断还是贪快。realWorldMapping 落到投资、收入、副业、现金流。verificationSigns 看回款、合同、成本失控。actionStrategy 给守、试、停、拆分投入等动作。\n' + base;
+              }
+              if (scenario === "career") {
+                return '【事业深度】重点不是"顺不顺"，而是：卡在能力、资源、关系还是时机。mainThread 多写上级关系、资源配置、职业节奏。coreConflict 点出卡在能力、上级、方向还是外部环境。realWorldMapping 落到跳槽、升职、面试、合作。verificationSigns 看是否有明确反馈、资源倾斜、机会窗口。actionStrategy 给争取、等待、补能力等动作。\n' + base;
+              }
+              if (scenario === "interpersonal" || scenario === "social_invite") {
+                return '【人际深度】重点不是"别人怎么想"，而是：对方行为信号、关系里的真实位置、如何轻量试探。mainThread 多写主动性、回应质量、社交优先级。coreConflict 点出卡在误会、优先级不高、互动不平衡还是期待不同。realWorldMapping 落到对方是否主动、回应质量、邀约可能。verificationSigns 看对方是否主动联系、是否解释、是否持续回应。actionStrategy 给轻量开口、降低期待、暂停追问等动作。\n' + base;
+              }
+              if (scenario === "health") {
+                return '【健康深度】卦象只能看状态倾向，不能替代医学判断。重点是：当前身体信号、生活习惯、压力来源、调整方向。mainThread 写身体状态倾向和生活节奏。coreConflict 点出卡在习惯、压力、忽视还是过度焦虑。realWorldMapping 落到作息、饮食、运动、压力源。verificationSigns 看症状是否持续、是否有明确诱因。actionStrategy 给作息调整、减压、观察窗口。riskBoundary 必须提醒：如有不适优先以专业检查为准。\n' + base;
+              }
+              if (scenario === "study") {
+                return '【学业深度】重点不是"能不能过"，而是：准备状态、薄弱环节、心态管理。mainThread 写复习节奏和知识覆盖度。coreConflict 点出卡在基础不牢、复习策略还是考场心态。realWorldMapping 落到刷题、模考、时间分配。verificationSigns 看模考成绩趋势、错题收敛。actionStrategy 给补短板、重点突破、考场策略。\n' + base;
+              }
+              if (scenario === "lost") {
+                return '【失物深度】重点是：最后使用场景、丢失位置范围、找回概率。mainThread 写物品状态和可能位置。coreConflict 点出卡在遗忘、他人拿走还是环境变动。realWorldMapping 落到具体场所、时间线、随身物品。verificationSigns 看是否被人捡到、是否还在原处。actionStrategy 给找回路径和止损方案。\n' + base;
+              }
+              return base;
+            }
+
+            function requestAiInterpretation(packet) {
+              var isInterpersonal = packet.scenario === "social_invite" || packet.scenario === "interpersonal";
+              var isHealth = packet.scenario === "health";
+              var isMoney = packet.scenario === "money";
+              var systemContent = '你是一位经验丰富的梅花易数解读师，也是一位擅长自然语言表达的心理洞察型占卜顾问。\n\n你的任务：根据我提供的卦象事实、规则判断和用户问题，生成一份有深度、有结构、不重复的解读。\n\n重要限制：\n1. 不得修改本卦、变卦、互卦、动爻、体用关系。\n2. 不得推翻 ruleJudgment 中的核心倾向。\n3. 把表达变得更自然、更像真人占卜师。\n4. 可以结合用户问题做具体化表达。\n5. 不要绝对化承诺，不要说"必定""一定发生"。\n6. 人称判断：如果问题中包含人名或第三人称代词（TA、她、他），你必须用第三人称分析（如"TA在..."），禁止用"你"。只有问题是"我/我的"时才用"你"。\n7. 如果场景是"感情"，必须先判断是恋爱关系还是普通朋友关系——"找我玩""一起出去"通常是朋友关系，"在一起""复合""表白"才是恋爱。\n8. 轻松但不轻浮，直白但不伤人，像一个懂卦的朋友陪你把事情拆开。不要仙风道骨，也不要毒舌表演。\n9. 必须返回严格 JSON，不要输出 Markdown、不要输出代码块、不要输出 ```json 标记。直接输出 JSON 对象。\n10. freeVersion 字段：sceneTag 为场景标签（6字以内），boundaryHint 为边界提示（40字以内，根据具体问题写）。' + (isInterpersonal ? '\n11. 【人际关系表达规则】禁止直接断言他人内心，必须基于行为信号判断。不要把普通朋友关系写成暧昧关系。\n12. 【反重复规则】shortAnswer 给结论，mainThread 讲结构，coreConflict 讲卡点。深度字段不能重复 shortAnswer 的原句或近义句。' : '\n11. 【反重复规则】shortAnswer 给结论，mainThread 讲结构，coreConflict 讲卡点。深度字段不能重复 shortAnswer 的原句或近义句。如果 mainThread 讲了"宜守"，coreConflict 就要讲"为什么会想攻、攻会卡在哪里"。') + (isHealth ? '\n【健康场景规则】卦象只能看状态倾向，不能替代医学判断。禁止说"你没病""不用看医生""一定会好"。riskBoundary 必须包含"如有不适优先以专业检查为准"的提醒。不要做任何诊断。' : '') + (isMoney ? '\n【财运场景规则】禁止承诺收益，禁止说"一定赚钱""稳赚""放心投"。必须包含风险提示或止损建议。actionStrategy 必须提到"先小后大""分批""止损"等风控概念。' : '');
+
+              var sceneTemplate = getDepthTemplate(packet.scenario);
+              var interpersonalWriteGuide = isInterpersonal ? '\n【人际写法】interpersonalArchetype 是本地预判原型，可参考但必须结合卦象展开。重点：互动结构；行为信号；真实位置；轻量试探；继续/收的信号。' : '';
+
+              var userContent = '用户问题："' + packet.question + '"\n场景：' + packet.scenario + '\n语气：' + packet.toneGuide.tone + '\n重点：' + packet.toneGuide.focus + '\n\n卦象事实：\n' + JSON.stringify(packet.guaFacts, null, 2) + '\n\n本地判断：\n' + JSON.stringify(packet.ruleJudgment, null, 2) + '\n\n内容种子：\n' + JSON.stringify(packet.contentSeeds, null, 2) + '\n\n' + sceneTemplate + interpersonalWriteGuide + '\n\n【免费层边界规则】\nheadline和shortAnswer是免费展示的，只给方向不给具体行动方案。\nriskBoundary只给一句轻提醒，不给详细风险清单。\nmainThread/actionStrategy等深度字段才给完整推理和具体步骤。\n\n返回JSON：\n{\n  "headline": "总判断(8-16字)",\n  "shortAnswer": "当前局势方向(15-35字，只给方向不给具体行动)",\n  "mainThread": "深推主线(180-260字)",\n  "coreConflict": "关键矛盾(120-180字)",\n  "guaLogic": "卦象拆解(160-240字)",\n  "realWorldMapping": "现实落点(140-220字)",\n  "verificationSigns": "验证信号(100-160字)",\n  "actionStrategy": "行动策略(120-180字)",\n  "riskBoundary": "一句轻提醒(15-30字，只说方向不给详细风险)",\n  "finalWord": "一语定局(8-18字)",\n  "freeVersion": {"sceneTag":"场景标签","boundaryHint":"边界提示"}\n}';
+
+              var workerURL = "https://bitter-scene-172b.w2286971650.workers.dev";
+
+              return fetchWithTimeout(workerURL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  model: "deepseek-chat",
+                  messages: [
+                    { role: "system", content: systemContent },
+                    { role: "user", content: userContent }
+                  ],
+                  temperature: 0.7,
+                  max_tokens: 4096
+                })
+              }, 22000).then(function(r) {
+                if (!r.ok) throw new Error('AI request failed: ' + r.status);
+                return r.text();
+              }).then(function(rawText) {
+                debugLog('[AI] Worker 原始返回:', rawText.slice(0, 800));
+                var apiResp = null;
+                try { apiResp = JSON.parse(rawText); } catch(e) {}
+                var aiReply = (apiResp && apiResp.choices && apiResp.choices[0] && apiResp.choices[0].message && apiResp.choices[0].message.content) ? apiResp.choices[0].message.content.trim() : rawText;
+                var parsed = parseAiJson(aiReply);
+                if (!parsed) {
+                  var fallback = fallbackMarkerParse(aiReply);
+                  if (fallback) { debugLog('[AI] JSON解析失败，标记解析回退成功'); return fallback; }
+                  throw new Error("AI response is not valid JSON");
+                }
+                return parsed;
+              });
+            }
+
+            function applyAiFallback(interpretation, reason) {
+              console.warn('[AI] 降级到本地规则:', reason);
+              return {
+                aiEnhanced: false,
+                aiStatus: AI_STATUS.FALLBACK,
+                aiFallbackReason: reason || "AI 解读暂不可用，已展示本地卦象推演结果"
+              };
+            }
+
+            // ========== AI 深度解读开始 ==========
+            var workerURL = "https://bitter-scene-172b.w2286971650.workers.dev";
+
+            window._aiReasoning = { aiEnhanced: false, aiStatus: 'loading' };
             window._aiVerdict = null;
+            window._aiFailed = false;
+            window._lastInterpretation = interpretation;
             renderResult(interpretation, result);
+            _isDeriving = false;
             setTimeout(function(){
-              var ra = document.getElementById('resultArea');
-              if (ra) ra.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0, 0); }
             }, 100);
 
-            fetch(workerURL, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                messages: [
-                  {
-                    role: "system",
-                    content: `你是梅花易数解卦师。${window._currentMode === 'dushe' ? '毒舌模式：语气犀利直接，专挑自欺欺人的部分戳破。不要安慰，只要真相。' : '语气克制、有洞察力，像见多识广的长者。'}
+            var packet = buildJudgmentPacket(result, interpretation, question, interpretation.meta.scenarioKey || 'general');
+            debugLog('[AI] 发起请求');
 
-【人称规则】
-如果用户问的是别人的事（如"程奥的工作""她会不会找我"），你必须用第三人称（"程奥""TA"）来分析，不要用"你"。用户是旁观者，不是当事人。
-如果用户问的是自己的事（如"我的工作""我该不该去"），用"你"来分析。
+            interpretation.aiStatus = AI_STATUS.LOADING;
 
-【解卦规则】
-每段必须包含三层：卦理依据→现实翻译→具体判断。
-禁止只说卦理不翻译现实。禁止只说现实不引用卦理。
-禁止通用模板句。如果这段话换一个卦还能用，就不能写。
-禁止"可能""也许""建议观察"——要有明确判断。
-
-【禁用词】
-不得出现以下句式（这些是模板句，不是解卦）：
-- "以退为进不是认输"
-- "你现在的每一步都在为那个正向的结果铺路"
-- "外部环境对你不利，但逆境给你的不是一个惩罚"
-- "保持当下的步调，同时对细微信号保持警觉"
-- "事态会从A走向B"
-- "关键是XX，不能YY"
-
-如果卦象显示不成，直接说不成的原因。`
-                  },
-                  {
-                    role: "user",
-                    content: `用户问题："${question}"
-
-【重要】先判断人称：
-- 如果问题中有具体人名（如"程奥""小明""TA"）或"她/他的"，这是问别人的事。分析时用第三人称，用户是旁观者。
-- 如果问题是"我""我的"或没有具体人名，这是问自己的事。分析时用"你"。
-
-这是一个${interpretation.meta.scenarioLabel || '通用'}问题。
-
-卦象数据：
-- 本卦：${result.benGuaName}（${result.benGua}）— 代表当前事态的本质
-- 变卦：${result.bianGuaName}（${result.bianGua}）— 代表事态未来的演变方向
-- 动爻：第${result.moveYao}爻 — 爻辞："${(YAO_CI?.[result.benGuaName]?.[result.moveYao - 1]?.text || '')}"，白话："${(YAO_CI?.[result.benGuaName]?.[result.moveYao - 1]?.core || '')}"
-- 体用关系：${interpretation.meta.tiYongType}
-- 互卦：${result.huGuaName || '无'}
-
-请输出以下JSON，每段都要围绕用户的具体问题展开，不能脱离问题谈卦理：
-
-{
-  "coreVerdict": "核心裁决，一句话（20字以内，有态度，行就行不行就不行）",
-  "verdictBullets": ["要点1（30字以内）", "要点2", "要点3"],
-  "scenarioLabel": "场景标签（如：求职面试、入职评估，不超过6字）",
-  "boundaryHint": "边界提示（40字以内，必须结合用户具体处境，不能说跳槽裸辞如果用户已经离职）",
-  "tiYongAnalysis": "格局分析：先说明体用关系是什么（如'体卦乾金，用卦离火，火克金，你在这件事中处于被动'），再翻译成现实（如'这家公司面试中居高临下'），最后回到用户问题。三步走：卦理→现实→判断。（150-200字）",
-  "yaoExplanation": "动爻精解：先引用爻辞原文并解释含义（如'井冽寒泉食，意思是井水清冽甘甜，但需要有人来打'），再用爻位特征说明阶段（如'第五爻是君位，代表事情最核心的阶段'），最后翻译成用户问题的画面（如'这家公司条件不错，但没人主动给你机会，你需要自己证明价值'）。（250-350字）",
-  "actionSuggestion": "行动建议：基于以上分析，给出一个最核心、最具体的行动。不绕弯子。告诉用户'你现在应该做什么'和'你现在不应该做什么'。（150-200字）",
-  "bianGuaTrend": "趋势演变：先说明本卦和变卦的关系（如'井卦变屯卦，从深挖一口井变成万事开头难'），再解释这个变化在现实中意味着什么（如'入职后会有一段艰难的起步期'），最后给判断。（150-200字）",
-  "huGuaFactor": "内在因素：先说明互卦是什么（如'互卦是水火既济'），再解释互卦揭示了什么（如'表面看平衡，但内部有冲突'），最后翻译成用户问题中没看到的隐患。（150-200字）",
-  "riskWarning": "风险预警：用户心理上的盲区。不是'建议谨慎'这种废话，而是'你最容易在这一步犯什么错'。直接说后果。（100-150字）",
-  "summary": "全盘总结：一句话描述用户此刻的处境。40-60字。不说预测，只说现状。让用户读完沉默三秒的那种。"
-}`
-                  }
-                ],
-                max_tokens: 8500,
-              })
-            })
-            .then(r => r.json())
-            .then(data => {
-              const targetArea = document.getElementById("resultArea");
-              if (!targetArea) return;
-
-              let aiReply = data.choices[0].message.content;
-              aiReply = aiReply.trim();
-              if (aiReply.startsWith("```json")) { aiReply = aiReply.slice(7); }
-              if (aiReply.endsWith("```")) { aiReply = aiReply.slice(0, -3); }
-              aiReply = aiReply.trim();
-
-              let aiReport = {};
-              try {
-                aiReport = JSON.parse(aiReply);
-              } catch (e) {
-                console.log("AI JSON解析失败，原始内容：", aiReply);
-                aiReport = {};
+            requestAiInterpretation(packet).then(function(parsed) {
+              parsed = patchMissingAiRecommendedFields(parsed);
+              if (!validateAiInterpretation(parsed)) {
+                var fb = applyAiFallback(interpretation, "AI 返回内容不完整");
+                window._aiReasoning = fb;
+                window._aiFailed = true;
+                interpretation.aiStatus = AI_STATUS.INVALID;
+              } else if (detectAiConflict(interpretation, parsed)) {
+                var fb2 = applyAiFallback(interpretation, "AI 解读与本地卦象判断冲突");
+                window._aiReasoning = fb2;
+                window._aiFailed = true;
+                interpretation.aiStatus = AI_STATUS.FALLBACK;
+              } else {
+                var merged = mergeRuleAndAiInterpretation(interpretation, parsed);
+                sanitizeInterpersonalAi(merged, packet.scenario);
+                sanitizeMoneyAi(merged, packet.scenario);
+                sanitizeHealthAi(merged, packet.scenario);
+                merged.aiStatus = AI_STATUS.SUCCESS;
+                window._aiReasoning = merged;
+                interpretation.meta.verdict = (merged.headline || '').slice(0, 25);
+                interpretation.meta.bullets = [
+                  (merged.shortAnswer || '').slice(0, 40),
+                  (merged.verificationSigns || '').slice(0, 40),
+                  (merged.riskBoundary || '').slice(0, 40)
+                ];
+                if (parsed.freeVersion) {
+                  if (parsed.freeVersion.sceneTag) interpretation.meta.scenarioLabel = parsed.freeVersion.sceneTag.slice(0, 6);
+                  if (parsed.freeVersion.boundaryHint) interpretation.meta.boundaryHint = parsed.freeVersion.boundaryHint.slice(0, 50);
+                }
+                debugLog('[AI] AI解读成功:', merged.headline);
               }
-              window._aiReasoning = {
-                bianGuaTrend: aiReport.bianGuaTrend || '',
-                huGuaFactor: aiReport.huGuaFactor || '',
-                tiYongAnalysis: aiReport.tiYongAnalysis || '',
-                yaoExplanation: aiReport.yaoExplanation || '',
-                actionSuggestion: aiReport.actionSuggestion || '',
-                riskWarning: aiReport.riskWarning || '',
-                summary: aiReport.summary || ''
-              };
-
-              // 用AI内容覆盖免费版模板
-              if (aiReport.coreVerdict) {
-                interpretation.meta.verdict = aiReport.coreVerdict;
-              }
-              if (aiReport.verdictBullets && aiReport.verdictBullets.length > 0) {
-                interpretation.meta.bullets = aiReport.verdictBullets;
-              }
-              if (aiReport.boundaryHint) {
-                interpretation.meta.boundaryHint = aiReport.boundaryHint;
-              }
-              if (aiReport.scenarioLabel) {
-                interpretation.meta.scenarioLabel = aiReport.scenarioLabel;
-              }
-
-              if (aiReport.verdict) {
-                window._aiVerdict = aiReport.verdict;
-              }
-
-              // 用AI内容重新渲染结果区
-              renderResult(interpretation, result);
-
-              // 更新推演区
+              currentShareText = buildShareText(interpretation);
+              if (_historyId) updateHistoryItem(_historyId, interpretation);
               var reasoningEl = document.getElementById('reasoningContent');
-              if (reasoningEl && window._aiReasoning && window._aiReasoning.tiYongAnalysis) {
+              if (reasoningEl && window._aiReasoning && (window._aiReasoning.aiEnhanced || window._aiReasoning.guaExplanation || window._aiReasoning.aiFallbackReason)) {
                 var oldSection = reasoningEl.querySelector('.gua-reasoning-section');
                 var newSection = renderGuaReasoning(interpretation, result, window._aiReasoning);
                 if (newSection) {
@@ -9811,25 +10913,20 @@
                   else reasoningEl.appendChild(newSection);
                 }
               }
-              setTimeout(function(){
-                var ra = document.getElementById('resultArea');
-                if (ra) ra.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }, 200);
-            })
-            .catch(err => {
-              console.log("AI 深度解读请求失败：", err);
-              // 基础结果已在请求前渲染，无需再次渲染
-              setTimeout(() => {
-                const ra = document.getElementById('resultArea');
-                if (ra && !ra.classList.contains('hidden')) {
-                  ra.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }, 200);
+              setTimeout(scrollToResult, 150);
+            }).catch(function(err) {
+              var reason = err.name === 'AbortError' ? "AI 解读超时" : "AI 解读请求失败";
+              console.warn('[AI] 请求失败:', err.name, err.message);
+              showToast(reason + '，已展示本地结果');
+              window._aiReasoning = applyAiFallback(interpretation, reason);
+              window._aiFailed = true;
+              interpretation.aiStatus = err.name === 'AbortError' ? AI_STATUS.TIMEOUT : AI_STATUS.ERROR;
+              if (_historyId) updateHistoryItem(_historyId, interpretation);
             });
             // ========== AI 深度解读结束 ==========
 
-            // 保存到历史记录
-            saveToHistory(interpretation);
+            // 保存到历史记录（先存本地结果占位，AI完成后会更新）
+            var _historyId = saveToHistory(interpretation);
             // 自动解锁图鉴
             var guaName = result.benGuaName;
             if (guaName) {
@@ -9840,7 +10937,7 @@
                 var now = new Date();
                 colData.unlockTimes[guaName] = (now.getMonth() + 1) + '月' + now.getDate() + '日';
                 saveCollectionData(colData);
-                showToast('📜 图鉴解锁：' + guaName);
+                showToast('图鉴解锁：' + guaName);
               }
             }
             // 同时解锁变卦
@@ -9855,25 +10952,23 @@
                 saveCollectionData(colData2);
               }
             }
-            showToast('已保存到记录');
 
             // 延迟滚动确保内容渲染完成
             setTimeout(function(){
-              var ra = document.getElementById('resultArea');
-              if (ra && !ra.classList.contains('hidden')) {
-                ra.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }
+              try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0, 0); }
             }, 200);
           } catch (err) {
             console.error('推演出错:', err);
+            _isDeriving = false;
             hideLoading(timer);
-            showToast('推演出错了，请重试');
+            showToast('推演出错了，换个问题再试试');
           }
         }, 1800);
       } catch (err) {
         console.error('初始化出错:', err);
+        _isDeriving = false;
         if (timer) hideLoading(timer);
-        showToast('出错了，请重试');
+        showToast('出错了，换个问题再试试');
       }
     }
   </script>
@@ -9881,19 +10976,48 @@
   <!-- ==================== 底部导航栏 ==================== -->
   <nav class="bottom-nav">
     <button class="nav-item active" data-tab="divine" id="nav-divine">
-      <span class="nav-icon">🔮</span>
+      <span class="nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M6 7h12"></path>
+          <path d="M6 12h12"></path>
+          <path d="M6 17h12"></path>
+        </svg>
+      </span>
       <span>起卦</span>
     </button>
     <button class="nav-item" data-tab="history" id="nav-history">
-      <span class="nav-icon">📋</span>
+      <span class="nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M8 5h8a2 2 0 0 1 2 2v12H8a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3Z"></path>
+          <path d="M10 5V3.5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1V5"></path>
+          <path d="M9 10h6"></path>
+          <path d="M9 13.5h5"></path>
+        </svg>
+      </span>
       <span>记录</span>
     </button>
     <button class="nav-item" data-tab="collection" id="nav-collection">
-      <span class="nav-icon">📜</span>
+      <span class="nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="3" width="8" height="8" rx="2"></rect>
+          <rect x="13" y="3" width="8" height="8" rx="2"></rect>
+          <rect x="3" y="13" width="8" height="8" rx="2"></rect>
+          <rect x="13" y="13" width="8" height="8" rx="2"></rect>
+        </svg>
+      </span>
       <span>图鉴</span>
     </button>
     <button class="nav-item" data-tab="settings" id="nav-settings">
-      <span class="nav-icon">⚙️</span>
+      <span class="nav-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 3v3"></path>
+          <path d="M12 18v3"></path>
+          <path d="M3 12h3"></path>
+          <path d="M18 12h3"></path>
+          <path d="M12 8l0 4l3 2"></path>
+        </svg>
+      </span>
       <span>设置</span>
     </button>
   </nav>
