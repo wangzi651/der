@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -1523,7 +1523,7 @@
               id="question"
               name="question"
               class="input-field w-full p-4 min-h-[100px] resize-none text-base"
-              placeholder="比如：他最近对我到底是什么态度？"
+              placeholder="写下你想问的事"
               aria-required="true"
               autocomplete="off"
             ></textarea>
@@ -6245,7 +6245,7 @@
         "分手", "前任", "暧昧", "暗恋", "爱不爱", "脱单", "相亲",
         "追她", "追他", "男朋友", "女朋友", "对象", "老公", "老婆"
       ],
-      lost: ["丢了", "找不到", "遗失", "失物", "东西在哪", "找手机", "找钥匙", "找钱包", "不见了"]
+      lost: ["丢了", "丢的", "找不到", "遗失", "失物", "东西在哪", "找手机", "找钥匙", "找钱包", "不见了", "找不回来", "能找回"]
     };
 
     const SOCIAL_INVITE_KEYWORDS = [
@@ -6280,6 +6280,8 @@
       const hasLostSignal = hasAnyKeyword(q, STRONG_SIGNALS.lost);
       const hasInviteSignal = hasAnyKeyword(q, SOCIAL_INVITE_KEYWORDS);
       const hasInterpersonalSignal = hasAnyKeyword(q, INTERPERSONAL_KEYWORDS);
+      const hasMoneySignal = /财运|钱|工资|投资|收益|破财|赚钱|理财|副业|生意/.test(q);
+      const hasCareerSignal = /工作|事业|面试|升职|加薪|跳槽|创业|项目/.test(q);
 
       if (hasLostSignal) return "lost";
 
@@ -6287,9 +6289,9 @@
 
       if (hasLoveOpportunityPattern(q)) return "love";
 
-      if (hasInviteSignal) return "social_invite";
+      if (hasInviteSignal && !hasMoneySignal && !hasCareerSignal) return "social_invite";
 
-      if (hasInterpersonalSignal) return "interpersonal";
+      if (hasInterpersonalSignal && !hasMoneySignal && !hasCareerSignal) return "interpersonal";
 
       for (let scenario of QUEST_SCENARIO) {
         if (scenario.reg.test(q)) {
@@ -6545,12 +6547,12 @@
       const content = interpretation?.content || {};
       const ai = window._aiReasoning || {};
       const scenarioLabel = SCENARIO_RULES[meta.scenarioKey]?.label || '综合解读';
-      const shortText = ai.shortAnswer || lines.mainLine || '';
-      const finalText = ai.finalWord || ai.finalSentence || '';
+      const verdict = ai.verdict || '';
+      const summary = ai.summary || ai.finalWord || ai.finalSentence || '';
       var text = '算个der · ' + scenarioLabel + '\n' +
         meta.benGuaName + (meta.bianGuaName ? ' → ' + meta.bianGuaName : '') + '\n';
-      if (shortText) text += '\n"' + shortText + '"';
-      if (finalText && finalText !== shortText) text += '\n"' + finalText + '"';
+      if (verdict) text += '\n"' + verdict + '"';
+      if (summary && summary !== verdict) text += '\n"' + summary + '"';
       text += '\n\n—— 来自「算个der」';
       return text;
     }
@@ -6561,7 +6563,7 @@
       {type: "money", reg: /财运|钱|工资|投资|收益|破财|赚钱|理财/, desc: "财运财富类"},
       {type: "study", reg: /考试|考得过|能过吗|能不能过|过不过得了|六级|四级|雅思|托福|期末|资格证|笔试|面试题|刷题|复习|备考|学习|考研|上岸|成绩|学业|考证|分数|分数线|挂科|补考/, desc: "学业考试类"},
       {type: "health", reg: /健康|生病|体检|养生|睡眠|饮食|身体|不舒服|疼|痛/, desc: "健康养生类"},
-      {type: "lost", reg: /找手机|找钥匙|找钱包|找不到|丢了|失物|遗失|东西在哪|不见了/, desc: "失物寻找类"},
+      {type: "lost", reg: /找手机|找钥匙|找钱包|找不到|丢[了的]|失物|遗失|东西在哪|不见了|找不回来|能找回/, desc: "失物寻找类"},
       {type: "ticket", reg: /票|候补|抢票|预约|出行|车票|机票/, desc: "票务出行类"},
       {type: "interpersonal", reg: /同事|领导|室友|同学|家人|亲戚|合伙|误会|矛盾|冷淡|疏远|针对|排挤|相处|社交|圈子|闺蜜|哥们|不回我|不理我|已读不回|冷处理|不主动|回消息|敷衍|态度变了|忽冷忽热/, desc: "人际关系类"},
       {type: "social_invite", reg: /找我玩|约我|一起玩|聚会|出来玩|一起出去|吃饭|喝东西|主动联系|主动找我|会不会找我|为什么不找我|不来找我|五一找我|周末找我/, desc: "社交邀约类"},
@@ -6587,12 +6589,12 @@
     }
 
     function getFreeShortAnswer(ai, fallbackText) {
-      const text = ai && ai.shortAnswer ? ai.shortAnswer : fallbackText;
+      const text = ai && (ai.insight || ai.shortAnswer) ? (ai.insight || ai.shortAnswer) : fallbackText;
       return clampTextForFreeLayer(text, 42);
     }
 
     function getFreeRiskBoundary(ai, fallbackText) {
-      const text = ai && ai.riskBoundary ? ai.riskBoundary : fallbackText;
+      const text = ai && (ai.riskBoundary || ai.warning) ? (ai.riskBoundary || ai.warning) : fallbackText;
       return clampTextForFreeLayer(text, 28);
     }
 
@@ -8782,9 +8784,9 @@
           var ai = window._aiReasoning || {};
           var fsSituation = getFreeShortAnswer(ai, (content && content.relationshipState) || '');
           var fsRisk = getFreeRiskBoundary(ai, (content && content.riskWarning) || '');
-          var fsVerdictText = clampTextForFreeLayer(ai.headline || displayVerdict, 18);
+          var fsVerdictText = clampTextForFreeLayer(ai.verdict || ai.headline || displayVerdict, 18);
           var fsVerdictColor = borderColor;
-          if (ai.headline || ai.shortAnswer) fsVerdictColor = 'var(--accent)';
+          if (ai.verdict || ai.headline || ai.shortAnswer) fsVerdictColor = 'var(--accent)';
 
           var fsBody = symbolHtml + guaNameHtml +
             '<div id="fs-verdict"><div class="text-center" style="margin-bottom:0.8rem;"><span class="text-lg font-bold" style="color:' + fsVerdictColor + ';">' + escapeHtml(fsVerdictText) + '</span></div></div>' +
@@ -8978,90 +8980,85 @@
       // 整块大卡片
       var html = '<div class="result-card" style="padding:1.25rem;margin-top:1.5rem;border:1px solid rgba(201,166,107,0.2);box-shadow:0 0 20px rgba(201,166,107,0.05),0 2px 8px rgba(0,0,0,0.15);">';
       function reportText(value) {
-        return escapeHTML(value || '').replace(/\n/g, '<br>');
+        return escapeHTML(value || '').replace(/\n\n/g, '</p><p class="text-sm leading-7" style="color:var(--text-secondary);margin-top:0.75rem;">').replace(/\n/g, '<br>');
       }
-      var hasDeepReport = !!(aiContent && (aiContent.mainThread || aiContent.coreConflict || aiContent.guaLogic || aiContent.realWorldMapping || aiContent.actionStrategy || aiContent.deepDive || aiContent.concreteAnalysis));
+      var hasDeepReport = !!(aiContent && (aiContent.verdict || aiContent.insight || aiContent.action || aiContent.warning || aiContent.summary));
 
       if (aiContent && aiContent.aiFallbackReason) {
         html += '<div style="background:rgba(201,166,107,0.06);border:1px solid rgba(201,166,107,0.12);border-radius:8px;padding:0.5rem 0.75rem;margin-bottom:0.75rem;font-size:0.75rem;color:var(--text-tertiary);">' + escapeHTML(aiContent.aiFallbackReason) + '</div>';
       }
 
       var isInterpersonalScene = meta.scenarioKey === "social_invite" || meta.scenarioKey === "interpersonal";
-      var label1 = isInterpersonalScene ? "关系主线" : "当前";
-      var label2 = isInterpersonalScene ? "行为信号" : "边界";
-      var label3 = isInterpersonalScene ? "下一步策略" : "下一步";
       var basePanelTitle = isInterpersonalScene ? "关系判断" : "基础盘";
 
-      html += '<div class="reasoning-paragraph" style="border-left-color:rgba(220,180,90,0.28);background:rgba(220,180,90,0.025);"><div class="reasoning-title" style="color:rgba(220,180,90,0.9);">' + basePanelTitle + '</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' +
-        '<strong style="color:var(--text-primary);">' + label1 + '：</strong>' + escapeHTML((interpretation.content && interpretation.content.relationshipState) || '') +
-        '<br><strong style="color:var(--text-primary);">' + label2 + '：</strong>' + escapeHTML((interpretation.content && interpretation.content.boundary) || '') +
-        '<br><strong style="color:var(--text-primary);">' + label3 + '：</strong>' + escapeHTML((interpretation.content && interpretation.content.action) || '') +
-        '</p></div>';
+      if (hasDeepReport) {
+        var tiYongShort = {
+          "比和": "体用同频（" + tiName + "/" + tiEle + " ↔ " + yongName + "/" + yongEle + "）",
+          "体生用": "体生用（" + tiName + "/" + tiEle + " → " + yongName + "/" + yongEle + "，你在输出）",
+          "用生体": "用生体（" + yongName + "/" + yongEle + " → " + tiName + "/" + tiEle + "，外部在帮你）",
+          "体克用": "体克用（" + tiName + "/" + tiEle + " ⊣ " + yongName + "/" + yongEle + "，你主导）",
+          "用克体": "用克体（" + yongName + "/" + yongEle + " ⊣ " + tiName + "/" + tiEle + "，外部压制）"
+        };
+        var tiYongLabel = tiYongShort[tiYongType] || tiYongType;
+        var yaoStageLabel = (YAO_STAGE && YAO_STAGE[moveYao]) ? YAO_STAGE[moveYao].stage : "";
+        var guaFacts = [
+          tiYongLabel,
+          "动爻：第" + moveYao + "爻" + (yaoStageLabel ? "（" + yaoStageLabel + "）" : ""),
+          "本卦 " + benGuaName + " → 变卦 " + bianGuaName + (huGuaName ? "（互卦 " + huGuaName + "）" : "")
+        ];
+        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.30);background:rgba(201,166,107,0.03);border-radius:10px;padding:0.75rem 0.75rem 0.75rem 0.75rem;"><div class="reasoning-title" style="color:var(--accent);">' + basePanelTitle + '</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + guaFacts.join('<br>') + '</p></div>';
+      } else {
+        var label1 = isInterpersonalScene ? "关系主线" : "当前";
+        var label2 = isInterpersonalScene ? "行为信号" : "边界";
+        var label3 = isInterpersonalScene ? "下一步策略" : "下一步";
+        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.30);background:rgba(201,166,107,0.03);border-radius:10px;padding:0.75rem 0.75rem 0.75rem 0.75rem;"><div class="reasoning-title" style="color:var(--accent);">' + basePanelTitle + '</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' +
+          '<strong style="color:var(--text-primary);">' + label1 + '：</strong>' + escapeHTML((interpretation.content && interpretation.content.relationshipState) || '') +
+          '<br><strong style="color:var(--text-primary);">' + label2 + '：</strong>' + escapeHTML((interpretation.content && interpretation.content.boundary) || '') +
+          '<br><strong style="color:var(--text-primary);">' + label3 + '：</strong>' + escapeHTML((interpretation.content && interpretation.content.action) || '') +
+          '</p></div>';
+      }
       html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
 
       if (hasDeepReport) {
-        var mainThreadText = aiContent.mainThread || aiContent.deepDive || '';
-        if (mainThreadText) {
-          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.35);"><div class="reasoning-title" style="color:var(--accent);">为什么是这个局</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(mainThreadText) + '</p></div>';
+        var verdictText = aiContent.verdict || '';
+        if (verdictText) {
+          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.30);background:rgba(201,166,107,0.03);border-radius:10px;padding:0.75rem 0.75rem 0.75rem 0.75rem;"><div class="reasoning-title" style="color:var(--accent);font-size:0.65rem;">核心裁决</div><p class="text-sm leading-7" style="color:var(--text-primary);font-weight:500;">' + reportText(verdictText) + '</p></div>';
           html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
         }
-        if (aiContent.coreConflict) {
-          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(200,90,74,0.28);"><div class="reasoning-title" style="color:rgba(200,90,74,0.85);">真正卡住的地方</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(aiContent.coreConflict) + '</p></div>';
+        var insightText = aiContent.insight || '';
+        if (insightText) {
+          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.30);background:rgba(201,166,107,0.03);border-radius:10px;padding:0.75rem 0.75rem 0.75rem 0.75rem;"><div class="reasoning-title" style="color:var(--accent);font-size:0.65rem;">深度解读</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(insightText) + '</p></div>';
           html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
         }
-        var guaLogicText = aiContent.guaLogic || aiContent.guaExplanation || '';
-        if (guaLogicText) {
-          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(180,140,200,0.28);"><div class="reasoning-title" style="color:rgba(180,140,200,0.85);">卦里怎么说</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(guaLogicText) + '</p></div>';
-          html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
-        }
-        var mappingText = aiContent.realWorldMapping || aiContent.concreteAnalysis || '';
-        if (mappingText) {
-          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(100,160,200,0.30);"><div class="reasoning-title" style="color:rgba(100,160,200,0.85);">落到现实里</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(mappingText) + '</p></div>';
-          html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
-        }
-        if (aiContent.verificationSigns) {
-          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(100,180,140,0.28);"><div class="reasoning-title" style="color:rgba(100,180,140,0.85);">接下来怎么看</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(aiContent.verificationSigns) + '</p></div>';
-          html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
-        }
-        var actText = aiContent.actionStrategy || aiContent.strategy || aiContent.actionPlan || '';
+        var actText = aiContent.action || '';
         if (actText) {
-          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(100,160,200,0.30);"><div class="reasoning-title" style="color:rgba(100,160,200,0.85);">你现在怎么做</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(actText) + '</p></div>';
+          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.30);background:rgba(201,166,107,0.03);border-radius:10px;padding:0.75rem 0.75rem 0.75rem 0.75rem;"><div class="reasoning-title" style="color:var(--accent);font-size:0.65rem;">建议行动</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(actText) + '</p></div>';
           html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
         }
-        if (aiContent.riskBoundary) {
-          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(200,90,74,0.22);"><div class="reasoning-title" style="color:rgba(200,140,100,0.85);">边界和避坑</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(aiContent.riskBoundary) + '</p></div>';
+        var warnText = aiContent.warning || '';
+        if (warnText) {
+          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.30);background:rgba(201,166,107,0.03);border-radius:10px;padding:0.75rem 0.75rem 0.75rem 0.75rem;"><div class="reasoning-title" style="color:var(--accent);font-size:0.65rem;">最大风险</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + reportText(warnText) + '</p></div>';
           html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
         }
-      }
-
-      // ===== 暗线与心态（对用户心理状态的洞察） =====
-      var emotionalText = '';
-      if (aiContent && aiContent.emotionalReading) {
-        emotionalText = escapeHTML(aiContent.emotionalReading);
-      }
-      if (!hasDeepReport && emotionalText) {
-        var emotionalLabel = isInterpersonalScene ? "关系主线" : "暗线与心态";
-        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(180,140,200,0.3);"><div class="reasoning-title" style="color:rgba(180,140,200,0.85);">' + emotionalLabel + '</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + emotionalText + '</p></div>';
-        html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+        var summaryText = aiContent.summary || '';
+        if (summaryText) {
+          html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.30);background:rgba(201,166,107,0.03);border-radius:10px;padding:0.75rem 0.75rem 0.75rem 0.75rem;"><div class="reasoning-title" style="color:var(--accent);font-size:0.65rem;">一语定局</div><p class="text-sm leading-7" style="color:var(--text-secondary);font-style:italic;">' + reportText(summaryText) + '</p></div>';
+          html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+        }
       }
 
       // ===== 卦象拆解（格局分析+动爻精解） =====
-      var readingText = '';
-      if (aiContent && (aiContent.guaExplanation || aiContent.hexagramReading)) {
-        readingText = escapeHTML(aiContent.guaExplanation || aiContent.hexagramReading);
-      } else if (window._aiFailed) {
-        readingText = '<span style="color:var(--text-tertiary);">深度解读暂不可用，已展示本地卦象推演结果。</span>';
-      } else {
-        var q = userQuestion || '';
-        readingText = (tiYongMeanings[tiYongType] || tiYongMeanings["比和"]);
-        readingText += '<br><br>' + (yaoDetails[moveYao] || stageInfoRaw.meaning || '');
-        if (q.indexOf('公司') !== -1 || q.indexOf('面试') !== -1 || q.indexOf('工作') !== -1 || q.indexOf('靠谱') !== -1) {
-          readingText = readingText.replace(/你所处的环境/g, '你面试的这家公司').replace(/这件事/g, '这家公司');
-        } else if (q.indexOf('她') !== -1 || q.indexOf('他') !== -1 || q.indexOf('TA') !== -1 || q.indexOf('喜欢') !== -1 || q.indexOf('找我') !== -1) {
-          readingText = readingText.replace(/你所处的环境/g, '你和TA之间的关系').replace(/这件事/g, '这段关系');
-        }
-      }
+      // 有AI深度解读时隐藏，避免术语重复破坏体验
       if (!hasDeepReport) {
+      var readingText = '';
+      var q = userQuestion || '';
+      readingText = (tiYongMeanings[tiYongType] || tiYongMeanings["比和"]);
+      readingText += '<br><br>' + (yaoDetails[moveYao] || stageInfoRaw.meaning || '');
+      if (q.indexOf('公司') !== -1 || q.indexOf('面试') !== -1 || q.indexOf('工作') !== -1 || q.indexOf('靠谱') !== -1) {
+        readingText = readingText.replace(/你所处的环境/g, '你面试的这家公司').replace(/这件事/g, '这家公司');
+      } else if (q.indexOf('她') !== -1 || q.indexOf('他') !== -1 || q.indexOf('TA') !== -1 || q.indexOf('喜欢') !== -1 || q.indexOf('找我') !== -1) {
+        readingText = readingText.replace(/你所处的环境/g, '你和TA之间的关系').replace(/这件事/g, '这段关系');
+      }
       html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.25);"><div class="reasoning-title">卦象拆解</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + readingText + '</p>';
       if (YAO_CI && YAO_CI[benGuaName] && YAO_CI[benGuaName][moveYao - 1]) {
         var yaoCiText = YAO_CI[benGuaName][moveYao - 1].text.replace(/。+$/g, '');
@@ -9070,48 +9067,24 @@
       }
       html += '</div>';
       html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
-      } else if (YAO_CI && YAO_CI[benGuaName] && YAO_CI[benGuaName][moveYao - 1]) {
-        var deepYaoCiText = YAO_CI[benGuaName][moveYao - 1].text.replace(/。+$/g, '');
-        var deepYaoCiCore = YAO_CI[benGuaName][moveYao - 1].core.replace(/。+$/g, '');
-        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(201,166,107,0.18);"><div class="reasoning-title">动爻原文</div><p class="text-xs leading-7" style="color:var(--text-tertiary);font-family:serif;">"' + escapeHTML(deepYaoCiText) + '。"</p><p class="text-sm leading-7 mt-1" style="color:var(--text-secondary);">' + escapeHTML(deepYaoCiCore) + '。</p></div>';
-        html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
-      }
 
       // ===== 演变与暗流（趋势演变+互卦揭示） =====
-      var evolutionText = '';
-      if (aiContent && (aiContent.trend || aiContent.evolutionAndHidden)) {
-        evolutionText = escapeHTML(aiContent.trend || aiContent.evolutionAndHidden);
-      } else if (window._aiFailed) {
-        evolutionText = '<span style="color:var(--text-tertiary);">深度解读生成较慢，已展示本地推演结果。</span>';
-      } else {
-        evolutionText = '从「' + benGuaName + '」走向「' + bianGuaName + '」，当前状态正朝着新方向演进。互卦' + huGuaName + '揭示了内在因素。';
+      var evolutionText = '从「' + benGuaName + '」走向「' + bianGuaName + '」，当前状态正朝着新方向演进。';
+      if (huGuaName && huGuaName !== benGuaName) {
+        evolutionText += '互卦「' + huGuaName + '」揭示了在你没有注意到的地方，有一些内在因素正在影响这件事的走向。';
       }
-      if (!hasDeepReport) {
-        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(100,180,140,0.25);"><div class="reasoning-title" style="color:rgba(100,180,140,0.8);">演变与暗流 · ' + benGuaName + ' → ' + bianGuaName + '</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + evolutionText + '</p></div>';
-        html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
+      if (huEssence) {
+        evolutionText += '<br><br>互卦「' + huGuaName + '」的本质是"' + huEssence.essence + '"，' + huEssence.pattern + '。' + huEssence.keyPoint + '。';
+      }
+      html += '<div class="reasoning-paragraph" style="border-left-color:rgba(100,180,140,0.25);"><div class="reasoning-title" style="color:rgba(100,180,140,0.8);">演变与暗流 · ' + benGuaName + ' → ' + bianGuaName + '</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + evolutionText + '</p></div>';
+      html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
       }
 
-      // ===== 行动与警示（行动建议+风险预警） =====
-      var actionText = '';
-      if (aiContent && (aiContent.advice || aiContent.warning || aiContent.actionAndWarning)) {
-        var actionParts = [];
-        if (aiContent.advice) actionParts.push(escapeHTML(aiContent.advice));
-        if (aiContent.warning) actionParts.push('<br><span style="color:rgba(200,90,74,0.85);">⚠ ' + escapeHTML(aiContent.warning) + '</span>');
-        actionText = actionParts.length ? actionParts.join('') : escapeHTML(aiContent.actionAndWarning);
-      } else if (window._aiFailed) {
-        actionText = '<span style="color:var(--text-tertiary);">深度解读暂不可用，已展示本地建议。</span>';
-      } else {
-        actionText = '当前局势尚不明朗，建议等待更明确的信号。';
-      }
-      if (!hasDeepReport) {
-        html += '<div class="reasoning-paragraph" style="border-left-color:rgba(200,90,74,0.25);"><div class="reasoning-title" style="color:rgba(200,140,100,0.9);">行动与警示</div><p class="text-sm leading-7" style="color:var(--text-secondary);">' + actionText + '</p></div>';
-        html += '<div style="border-top:1px solid rgba(201,166,107,0.06);margin:0.75rem 0;"></div>';
-      }
-
-      // ===== 一语定局（全盘总结） =====
-      var sKey = meta.scenarioKey || "";
-      var scenarioPrefix = 'generic';
-      try { scenarioPrefix = getScenarioPrefix(sKey); } catch(e) {}
+      // ===== 一语定局（场景化全盘总结） =====
+      if (!aiContent.summary) {
+        var sKey = meta.scenarioKey || "";
+        var scenarioPrefix = 'generic';
+        try { scenarioPrefix = getScenarioPrefix(sKey); } catch(e) {}
 
       var closeMap = {
         love: {
@@ -9193,6 +9166,7 @@
         }
       }
       html += '<div class="reasoning-paragraph" style="border-left-color:var(--accent);"><div class="reasoning-title" style="color:var(--accent);">一句话</div><p class="text-sm leading-7" style="color:var(--text-primary);">' + closeText + '</p></div>';
+      }
 
       html += '</div>';
 
@@ -9337,6 +9311,30 @@
         parts.push('一句提醒：' + risk);
       }
 
+      if (ai.verdict) {
+        parts.push('');
+        parts.push('核心裁决：' + ai.verdict);
+      }
+      if (ai.insight) {
+        parts.push('');
+        parts.push('深度解读：');
+        parts.push(String(ai.insight).trim());
+      }
+      if (ai.action) {
+        parts.push('');
+        parts.push('建议行动：');
+        parts.push(String(ai.action).trim());
+      }
+      if (ai.warning) {
+        parts.push('');
+        parts.push('最大风险：');
+        parts.push(String(ai.warning).trim());
+      }
+      if (ai.summary) {
+        parts.push('');
+        parts.push('一语定局：' + ai.summary);
+      }
+
       var deepBlocks = [
         ['为什么是这个局', ai.mainThread || ai.deepDive],
         ['真正卡住的地方', ai.coreConflict],
@@ -9403,7 +9401,7 @@
           guaName = nameEl ? nameEl.textContent.trim() : '';
           var verdictEl = ra.querySelector('.verdict-text');
           verdict = verdictEl ? verdictEl.textContent.trim() : '';
-          summary = window._aiReasoning ? (window._aiReasoning.finalSentence || window._aiReasoning.finalWord || '') : '';
+          summary = window._aiReasoning ? (window._aiReasoning.summary || window._aiReasoning.finalSentence || window._aiReasoning.finalWord || '') : '';
         }
       } catch(e) {}
 
@@ -9476,8 +9474,8 @@
       var bianSym = (typeof GUA_SYMBOL_MAP !== 'undefined' && GUA_SYMBOL_MAP[cName]) || '';
       var symLine = benSym + (bianSym ? ' → ' + bianSym : '');
       var nameLine = bName + (cName ? ' → ' + cName : '');
-      var todayLine = clampTextForFreeLayer(ai.headline || ai.shortAnswer || (meta.verdict || '') || '', 18);
-      var remindLine = clampTextForFreeLayer(ai.finalWord || ai.finalSentence || '', 24);
+      var todayLine = clampTextForFreeLayer(ai.verdict || ai.headline || ai.shortAnswer || '', 18);
+      var remindLine = clampTextForFreeLayer(ai.summary || ai.finalWord || ai.finalSentence || '', 24);
       var dateStr = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
 
       var shareCard = document.createElement('div');
@@ -9544,8 +9542,8 @@
           days: days,
           question: meta.question || '',
           benGuaName: meta.benGuaName || '',
-          verdict: ai.headline || ai.shortAnswer || meta.verdict || '',
-          finalWord: ai.finalWord || ai.finalSentence || ''
+          verdict: ai.verdict || ai.headline || ai.shortAnswer || '',
+          finalWord: ai.summary || ai.finalWord || ai.finalSentence || ''
         });
         if (reminders.length > 50) reminders = reminders.slice(-50);
         localStorage.setItem('reviewReminders', JSON.stringify(reminders));
@@ -10215,7 +10213,7 @@
         { stage: '起局中...', subtext: '把这件小事放进去', step: 1 },
         { stage: '校势中...', subtext: '看谁在用力，谁在观望', step: 2 },
         { stage: '推演中...', subtext: '顺着卦象走一遍后路', step: 3 },
-        { stage: '收束中...', subtext: '把话说短一点，别绕', step: 4 }
+        { stage: '深度解析中...', subtext: '正在为你展开完整解读', step: 4 }
       ];
       const guaSymbols = ['☰', '☱', '☲', '☳', '☴', '☵', '☶', '☷'];
       let progress = 0;
@@ -10240,7 +10238,7 @@
       }
 
       const timer = setInterval(() => {
-        progress += 2;
+        progress += 1;
         const clampedProgress = Math.min(progress, 95);
         if (bar) bar.style.width = clampedProgress + '%';
         if (progressTrack) progressTrack.setAttribute('aria-valuenow', String(clampedProgress));
@@ -10370,8 +10368,6 @@
             const summaryCard = buildSummaryCardData(interpretation);
             currentShareText = buildShareText(interpretation);
 
-            hideLoading(timer);
-
             // ========== 升级 1：人称自动检测 ==========
             let personLabel = "你"; // 默认
             const q = question.trim();
@@ -10459,6 +10455,18 @@
             };
 
             function buildJudgmentPacket(result, interpretation, userQuestion, scenarioKey) {
+              var scenarioLabel = scenarioKey || 'general';
+              var benGuaContent = GUA_CONTENT_MAP[result.benGuaName] || {};
+              var bianGuaContent = GUA_CONTENT_MAP[result.bianGuaName] || {};
+              var benEssence = GUA_ESSENCE[result.benGuaName] || {};
+              var bianEssence = GUA_ESSENCE[result.bianGuaName] || {};
+              var huEssence = result.huGuaName ? (GUA_ESSENCE[result.huGuaName] || {}) : {};
+
+              var scenarioContentMap = { love: 'love', career: 'career', money: 'money', study: 'study', health: 'health', lost: 'lost' };
+              var scenarioContentKey = scenarioContentMap[scenarioLabel] || null;
+              var benSceneContent = scenarioContentKey && benGuaContent[scenarioContentKey] ? benGuaContent[scenarioContentKey] : benGuaContent;
+              var bianSceneContent = scenarioContentKey && bianGuaContent[scenarioContentKey] ? bianGuaContent[scenarioContentKey] : bianGuaContent;
+
               return {
                 question: userQuestion || "",
                 scenario: scenarioKey || "general",
@@ -10474,6 +10482,30 @@
                   yongEle: result.yong && result.yong.ele,
                   relation: interpretation.meta.tiYongType
                 },
+                benGuaProfile: {
+                  essence: benEssence.essence || '',
+                  pattern: benEssence.pattern || '',
+                  keyPoint: benEssence.keyPoint || '',
+                  keywords: benGuaContent.keywords || [],
+                  relationshipState: (benSceneContent && benSceneContent.relationshipState) || '',
+                  misjudgment: (benSceneContent && benSceneContent.misjudgment) || '',
+                  boundary: (benSceneContent && benSceneContent.boundary) || '',
+                  baseConclusion: (benSceneContent && benSceneContent.baseConclusion) || '',
+                  guaSummary: (benSceneContent && benSceneContent.guaSummary) || '',
+                  releaseCondition: (benSceneContent && benSceneContent.releaseCondition) || ''
+                },
+                bianGuaProfile: {
+                  essence: bianEssence.essence || '',
+                  pattern: bianEssence.pattern || '',
+                  keyPoint: bianEssence.keyPoint || '',
+                  keywords: bianGuaContent.keywords || [],
+                  relationshipState: (bianSceneContent && bianSceneContent.relationshipState) || '',
+                  guaSummary: (bianSceneContent && bianSceneContent.guaSummary) || ''
+                },
+                huGuaProfile: result.huGuaName ? {
+                  essence: huEssence.essence || '',
+                  pattern: huEssence.pattern || ''
+                } : null,
                 ruleJudgment: {
                   tendency: interpretation.meta.tendency || interpretation.lines.mainLine || "中性偏观察",
                   confidence: interpretation.meta.confidence || 60,
@@ -10502,20 +10534,18 @@
             }
 
             var AI_REQUIRED_FIELDS = [
-              "headline", "shortAnswer", "mainThread", "coreConflict",
-              "guaLogic", "realWorldMapping", "actionStrategy", "finalWord"
+              "verdict", "insight", "action", "warning", "summary"
             ];
 
-            var AI_RECOMMENDED_FIELDS = ["verificationSigns", "riskBoundary"];
+            var AI_RECOMMENDED_FIELDS = [];
 
             function patchMissingAiRecommendedFields(ai) {
               if (!ai || typeof ai !== "object") return ai;
-              if (!ai.verificationSigns) {
-                ai.verificationSigns = "接下来重点看现实反馈是否连续，不要只凭一时感觉下判断。";
-              }
-              if (!ai.riskBoundary) {
-                ai.riskBoundary = "先别急着把话说死。";
-              }
+              if (!ai.verdict) ai.verdict = "局势已明，关键在于你的选择。";
+              if (!ai.insight) ai.insight = "你正处在一个需要做出决定的节点，内心有犹豫也有期待。";
+              if (!ai.action) ai.action = "先稳住当下，再观察下一步的信号。";
+              if (!ai.warning) ai.warning = "不要因为焦虑而做出冲动的决定。";
+              if (!ai.summary) ai.summary = "看清局势，顺势而为。";
               return ai;
             }
 
@@ -10527,39 +10557,40 @@
             }
 
             function normalizeAiInterpretation(ai) {
-              var shortAnswer = ai.shortAnswer || ai.directAnswer || "";
-              var mainThread = ai.mainThread || ai.deepDive || "";
-              var coreConflict = ai.coreConflict || "";
-              var guaLogic = ai.guaLogic || ai.guaExplanation || "";
-              var realWorldMapping = ai.realWorldMapping || ai.concreteAnalysis || "";
-              var verificationSigns = ai.verificationSigns || ai.timingSignals || ai.trend || "";
-              var actionStrategy = ai.actionStrategy || ai.strategy || ai.actionPlan || ai.advice || "";
-              var riskBoundary = ai.riskBoundary || ai.warning || "";
-              var finalWord = ai.finalWord || ai.finalSentence || "";
-              return {
-                headline: String(ai.headline || "").trim(),
-                shortAnswer: String(shortAnswer).trim(),
-                mainThread: String(mainThread).trim(),
-                coreConflict: String(coreConflict).trim(),
-                guaLogic: String(guaLogic).trim(),
-                realWorldMapping: String(realWorldMapping).trim(),
-                verificationSigns: String(verificationSigns).trim(),
-                actionStrategy: String(actionStrategy).trim(),
-                riskBoundary: String(riskBoundary).trim(),
-                finalWord: String(finalWord).trim(),
-                directAnswer: String(shortAnswer).trim(),
-                emotionalReading: String(ai.emotionalReading || "").trim(),
-                guaExplanation: String(guaLogic).trim(),
-                trend: String(verificationSigns).trim(),
-                advice: String(actionStrategy).trim(),
-                warning: String(riskBoundary).trim(),
-                finalSentence: String(finalWord).trim(),
-                deepDive: String(mainThread).trim(),
-                concreteAnalysis: String(realWorldMapping).trim(),
-                strategy: String(actionStrategy).trim(),
-                actionPlan: String(actionStrategy).trim(),
-                timingSignals: String(verificationSigns).trim()
+              var verdict = ai.verdict || "";
+              var insight = ai.insight || "";
+              var action = ai.action || "";
+              var warning = ai.warning || "";
+              var summary = ai.summary || "";
+              var normalized = {
+                verdict: String(verdict).trim(),
+                insight: String(insight).trim(),
+                action: String(action).trim(),
+                warning: String(warning).trim(),
+                summary: String(summary).trim(),
+                headline: String(verdict).trim(),
+                shortAnswer: String(insight).trim(),
+                mainThread: String(insight).trim(),
+                coreConflict: String(insight).trim(),
+                guaLogic: String(insight).trim(),
+                realWorldMapping: String(action).trim(),
+                verificationSigns: String(insight).trim(),
+                actionStrategy: String(action).trim(),
+                riskBoundary: String(warning).trim(),
+                finalWord: String(summary).trim(),
+                directAnswer: String(verdict).trim(),
+                emotionalReading: String(insight).trim(),
+                guaExplanation: String(insight).trim(),
+                trend: String(insight).trim(),
+                advice: String(action).trim(),
+                finalSentence: String(summary).trim(),
+                deepDive: String(insight).trim(),
+                concreteAnalysis: String(action).trim(),
+                strategy: String(action).trim(),
+                actionPlan: String(action).trim(),
+                timingSignals: String(insight).trim()
               };
+              return normalized;
             }
 
             function detectAiConflict(ruleInterpretation, aiInterpretation) {
@@ -10593,6 +10624,11 @@
               }
               var ai = normalizeAiInterpretation(aiInterpretation);
               return {
+                verdict: ai.verdict,
+                insight: ai.insight,
+                action: ai.action,
+                warning: ai.warning,
+                summary: ai.summary,
                 headline: ai.headline,
                 shortAnswer: ai.shortAnswer,
                 mainThread: ai.mainThread,
@@ -10608,7 +10644,6 @@
                 guaExplanation: ai.guaExplanation,
                 trend: ai.trend,
                 advice: ai.advice,
-                warning: ai.warning,
                 finalSentence: ai.finalSentence,
                 deepDive: ai.deepDive,
                 concreteAnalysis: ai.concreteAnalysis,
@@ -10632,7 +10667,7 @@
                 [/她?心里没有你/g, "目前看不到对方有深入互动的信号"],
                 [/你不够重要/g, "你暂时不在对方的优先互动列表里"]
               ];
-              var fields = ["shortAnswer", "mainThread", "coreConflict", "guaLogic", "realWorldMapping", "verificationSigns", "actionStrategy", "riskBoundary", "finalWord", "directAnswer", "emotionalReading", "headline", "trend", "advice", "warning", "finalSentence"];
+              var fields = ["shortAnswer", "mainThread", "coreConflict", "guaLogic", "realWorldMapping", "verificationSigns", "actionStrategy", "riskBoundary", "finalWord", "directAnswer", "emotionalReading", "headline", "trend", "advice", "warning", "finalSentence", "verdict", "insight", "action", "summary"];
               for (var fi = 0; fi < fields.length; fi++) {
                 var val = merged[fields[fi]];
                 if (typeof val !== "string") continue;
@@ -10656,7 +10691,7 @@
                 [/稳赚不赔/g, "有基础但也有变数"],
                 [/必赚/g, "有空间但要控制投入"]
               ];
-              var fields = ["shortAnswer", "mainThread", "coreConflict", "guaLogic", "realWorldMapping", "verificationSigns", "actionStrategy", "riskBoundary", "finalWord", "headline", "trend", "advice", "warning", "finalSentence"];
+              var fields = ["shortAnswer", "mainThread", "coreConflict", "guaLogic", "realWorldMapping", "verificationSigns", "actionStrategy", "riskBoundary", "finalWord", "headline", "trend", "advice", "warning", "finalSentence", "verdict", "insight", "action", "warning", "summary"];
               for (var fi = 0; fi < fields.length; fi++) {
                 var val = merged[fields[fi]];
                 if (typeof val !== "string") continue;
@@ -10666,10 +10701,10 @@
                 merged[fields[fi]] = val;
               }
               var riskWords = /止损|分批|小额|先小后大|现金流|风控|控制投入/;
-              if (!riskWords.test(merged.actionStrategy || "")) {
+              if (!riskWords.test(merged.actionStrategy || merged.action || "")) {
                 merged.actionStrategy = (merged.actionStrategy ? merged.actionStrategy + " " : "") + "涉及投入时先小额验证，保留止损线，别影响现金流。";
               }
-              if (!riskWords.test(merged.riskBoundary || "")) {
+              if (!riskWords.test(merged.riskBoundary || merged.warning || "")) {
                 merged.riskBoundary = (merged.riskBoundary ? merged.riskBoundary + " " : "") + "别重仓，先看风控。";
               }
               return merged;
@@ -10688,7 +10723,7 @@
                 [/不用管它/g, "建议保持观察"],
                 [/不用吃药/g, "具体用药请遵医嘱"]
               ];
-              var fields = ["shortAnswer", "mainThread", "coreConflict", "guaLogic", "realWorldMapping", "verificationSigns", "actionStrategy", "riskBoundary", "finalWord", "headline", "trend", "advice", "warning", "finalSentence"];
+              var fields = ["shortAnswer", "mainThread", "coreConflict", "guaLogic", "realWorldMapping", "verificationSigns", "actionStrategy", "riskBoundary", "finalWord", "headline", "trend", "advice", "warning", "finalSentence", "verdict", "insight", "action", "warning", "summary"];
               for (var fi = 0; fi < fields.length; fi++) {
                 var val = merged[fields[fi]];
                 if (typeof val !== "string") continue;
@@ -10718,6 +10753,37 @@
               return fetch(url, mergedOpts).finally(function() { clearTimeout(timer); });
             }
 
+            function sanitizeJsonString(raw) {
+              var result = '';
+              var inString = false;
+              var escape = false;
+              for (var i = 0; i < raw.length; i++) {
+                var ch = raw[i];
+                if (escape) {
+                  result += ch;
+                  escape = false;
+                  continue;
+                }
+                if (ch === '\\' && inString) {
+                  result += ch;
+                  escape = true;
+                  continue;
+                }
+                if (ch === '"') {
+                  inString = !inString;
+                  result += ch;
+                  continue;
+                }
+                if (inString) {
+                  if (ch === '\n') { result += '\\n'; continue; }
+                  if (ch === '\r') { result += '\\r'; continue; }
+                  if (ch === '\t') { result += '\\t'; continue; }
+                }
+                result += ch;
+              }
+              return result;
+            }
+
             function parseAiJson(rawText) {
               if (!rawText || typeof rawText !== "string") return null;
               var text = rawText.trim()
@@ -10726,9 +10792,11 @@
                 .replace(/```$/i, "")
                 .trim();
               try { return JSON.parse(text); } catch(e) {}
-              var match = text.match(/\{[\s\S]*\}/);
+              var fixed = sanitizeJsonString(text);
+              try { return JSON.parse(fixed); } catch(e0) {}
+              var match = fixed.match(/\{[\s\S]*\}/);
               if (!match) { console.warn("[AI JSON 解析失败：未找到 JSON 对象]"); return null; }
-              try { return JSON.parse(match[0]); } catch(e2) { console.warn("[AI JSON 解析失败]", e2.message); return null; }
+              try { return JSON.parse(sanitizeJsonString(match[0])); } catch(e2) { console.warn("[AI JSON 解析失败]", e2.message); console.log("[AI JSON 失败内容]", match[0].slice(0, 300)); return null; }
             }
 
             function fallbackMarkerParse(aiReply) {
@@ -10778,39 +10846,39 @@
             function getDepthTemplate(scenario) {
               var base = '【反重复规则】每个深度字段必须提供不同的信息维度。如果 mainThread 讲了"宜守"，coreConflict 就要讲"为什么会想攻、攻会卡在哪里"。';
               if (scenario === "love" || scenario === "love_reconcile" || scenario === "love_general" || scenario === "love_ambiguous") {
-                return '【感情深度】重点不是"能不能成"，而是：关系位置、对方主动性、你是否过度投入、什么时候该推进什么时候该收。mainThread 多写暧昧结构、互动节奏。coreConflict 点出卡在对方不主动还是你太急。realWorldMapping 落到聊天、见面、回应速度。verificationSigns 看对方是否主动开启话题、是否愿意见面。actionStrategy 给轻量试探、暂停投入等动作。\n' + base;
+                return '【感情深度】重点不是"能不能成"，而是：关系位置、对方主动性、你是否过度投入、什么时候该推进什么时候该收。mainThread 多写暧昧结构、互动节奏，必须包含至少一个具体互动场景（聊天频率/见面意愿/回应速度）。coreConflict 点出卡在对方不主动还是你太急，必须明确说"卡在谁身上"。realWorldMapping 落到聊天、见面、回应速度，给出一个具体行为判断标准。verificationSigns 看对方是否主动开启话题、是否愿意见面，给出可观察的信号。actionStrategy 必须给具体动作：做什么、不做什么、时间窗口、停止条件。例如"这周主动发一次消息，48小时没回就收"。\n' + base;
               }
               if (scenario === "money") {
-                return '【财运深度】重点不是"发财/不发财"，而是：钱从哪来、风险在哪、该守现金流还是扩张。mainThread 多写投入产出、止损线。coreConflict 点出卡在机会、判断还是贪快。realWorldMapping 落到投资、收入、副业、现金流。verificationSigns 看回款、合同、成本失控。actionStrategy 给守、试、停、拆分投入等动作。\n' + base;
+                return '【财运深度】重点不是"发财/不发财"，而是：钱从哪来、风险在哪、该守现金流还是扩张。mainThread 多写投入产出、止损线，必须包含一个具体数字或比例参考。coreConflict 点出卡在机会、判断还是贪快，必须明确说"最大的风险是什么"。realWorldMapping 落到投资、收入、副业、现金流，给出一个具体场景判断。verificationSigns 看回款、合同、成本失控，给出可验证的信号。actionStrategy 必须给具体动作：投多少、什么时候停、分批还是一次、止损线在哪。\n' + base;
               }
               if (scenario === "career") {
-                return '【事业深度】重点不是"顺不顺"，而是：卡在能力、资源、关系还是时机。mainThread 多写上级关系、资源配置、职业节奏。coreConflict 点出卡在能力、上级、方向还是外部环境。realWorldMapping 落到跳槽、升职、面试、合作。verificationSigns 看是否有明确反馈、资源倾斜、机会窗口。actionStrategy 给争取、等待、补能力等动作。\n' + base;
+                return '【事业深度】重点不是"顺不顺"，而是：卡在能力、资源、关系还是时机。mainThread 多写上级关系、资源配置、职业节奏，必须包含一个具体职场场景。coreConflict 点出卡在能力、上级、方向还是外部环境，必须明确说"最大的阻力来自哪里"。realWorldMapping 落到跳槽、升职、面试、合作，给出一个具体行为建议。verificationSigns 看是否有明确反馈、资源倾斜、机会窗口，给出可观察的信号。actionStrategy 必须给具体动作：做什么、什么时候做、做到什么程度。\n' + base;
               }
               if (scenario === "interpersonal" || scenario === "social_invite") {
-                return '【人际深度】重点不是"别人怎么想"，而是：对方行为信号、关系里的真实位置、如何轻量试探。mainThread 多写主动性、回应质量、社交优先级。coreConflict 点出卡在误会、优先级不高、互动不平衡还是期待不同。realWorldMapping 落到对方是否主动、回应质量、邀约可能。verificationSigns 看对方是否主动联系、是否解释、是否持续回应。actionStrategy 给轻量开口、降低期待、暂停追问等动作。\n' + base;
+                return '【人际深度】重点不是"别人怎么想"，而是：对方行为信号、关系里的真实位置、如何轻量试探。mainThread 多写主动性、回应质量、社交优先级，必须包含一个具体互动场景。coreConflict 点出卡在误会、优先级不高、互动不平衡还是期待不同，必须明确说"问题出在哪一方"。realWorldMapping 落到对方是否主动、回应质量、邀约可能，给出一个具体判断标准。verificationSigns 看对方是否主动联系、是否解释、是否持续回应。actionStrategy 必须给具体动作：怎么开口、什么时候开口、对方没回应怎么办。\n' + base;
               }
               if (scenario === "health") {
-                return '【健康深度】卦象只能看状态倾向，不能替代医学判断。重点是：当前身体信号、生活习惯、压力来源、调整方向。mainThread 写身体状态倾向和生活节奏。coreConflict 点出卡在习惯、压力、忽视还是过度焦虑。realWorldMapping 落到作息、饮食、运动、压力源。verificationSigns 看症状是否持续、是否有明确诱因。actionStrategy 给作息调整、减压、观察窗口。riskBoundary 必须提醒：如有不适优先以专业检查为准。\n' + base;
+                return '【健康深度】卦象只能看状态倾向，不能替代医学判断。重点是：当前身体信号、生活习惯、压力来源、调整方向。mainThread 写身体状态倾向和生活节奏，必须包含一个具体生活场景。coreConflict 点出卡在习惯、压力、忽视还是过度焦虑，必须明确说"最需要调整的是什么"。realWorldMapping 落到作息、饮食、运动、压力源，给出一个具体调整建议。verificationSigns 看症状是否持续、是否有明确诱因。actionStrategy 必须给具体动作：调整什么、怎么调整、观察多久。riskBoundary 必须提醒：如有不适优先以专业检查为准。\n' + base;
               }
               if (scenario === "study") {
-                return '【学业深度】重点不是"能不能过"，而是：准备状态、薄弱环节、心态管理。mainThread 写复习节奏和知识覆盖度。coreConflict 点出卡在基础不牢、复习策略还是考场心态。realWorldMapping 落到刷题、模考、时间分配。verificationSigns 看模考成绩趋势、错题收敛。actionStrategy 给补短板、重点突破、考场策略。\n' + base;
+                return '【学业深度】重点不是"能不能过"，而是：准备状态、薄弱环节、心态管理。mainThread 写复习节奏和知识覆盖度，必须包含一个具体学习场景。coreConflict 点出卡在基础不牢、复习策略还是考场心态，必须明确说"最该补的是哪块"。realWorldMapping 落到刷题、模考、时间分配，给出一个具体调整建议。verificationSigns 看模考成绩趋势、错题收敛。actionStrategy 必须给具体动作：先补哪科、每天多少时间、什么时候做模考。\n' + base;
               }
               if (scenario === "lost") {
-                return '【失物深度】重点是：最后使用场景、丢失位置范围、找回概率。mainThread 写物品状态和可能位置。coreConflict 点出卡在遗忘、他人拿走还是环境变动。realWorldMapping 落到具体场所、时间线、随身物品。verificationSigns 看是否被人捡到、是否还在原处。actionStrategy 给找回路径和止损方案。\n' + base;
+                return '【失物深度】重点是：最后使用场景、丢失位置范围、找回概率。mainThread 写物品状态和可能位置，必须包含一个具体场所描述。coreConflict 点出卡在遗忘、他人拿走还是环境变动，必须明确说"最可能的原因是什么"。realWorldMapping 落到具体场所、时间线、随身物品，给出一个具体寻找路径。verificationSigns 看是否被人捡到、是否还在原处。actionStrategy 必须给具体动作：先找哪里、怎么找、找不到怎么办。\n' + base;
               }
               return base;
             }
 
             function requestAiInterpretation(packet) {
-              var isInterpersonal = packet.scenario === "social_invite" || packet.scenario === "interpersonal";
               var isHealth = packet.scenario === "health";
               var isMoney = packet.scenario === "money";
-              var systemContent = '你是一位经验丰富的梅花易数解读师，也是一位擅长自然语言表达的心理洞察型占卜顾问。\n\n你的任务：根据我提供的卦象事实、规则判断和用户问题，生成一份有深度、有结构、不重复的解读。\n\n重要限制：\n1. 不得修改本卦、变卦、互卦、动爻、体用关系。\n2. 不得推翻 ruleJudgment 中的核心倾向。\n3. 把表达变得更自然、更像真人占卜师。\n4. 可以结合用户问题做具体化表达。\n5. 不要绝对化承诺，不要说"必定""一定发生"。\n6. 人称判断：如果问题中包含人名或第三人称代词（TA、她、他），你必须用第三人称分析（如"TA在..."），禁止用"你"。只有问题是"我/我的"时才用"你"。\n7. 如果场景是"感情"，必须先判断是恋爱关系还是普通朋友关系——"找我玩""一起出去"通常是朋友关系，"在一起""复合""表白"才是恋爱。\n8. 轻松但不轻浮，直白但不伤人，像一个懂卦的朋友陪你把事情拆开。不要仙风道骨，也不要毒舌表演。\n9. 必须返回严格 JSON，不要输出 Markdown、不要输出代码块、不要输出 ```json 标记。直接输出 JSON 对象。\n10. freeVersion 字段：sceneTag 为场景标签（6字以内），boundaryHint 为边界提示（40字以内，根据具体问题写）。' + (isInterpersonal ? '\n11. 【人际关系表达规则】禁止直接断言他人内心，必须基于行为信号判断。不要把普通朋友关系写成暧昧关系。\n12. 【反重复规则】shortAnswer 给结论，mainThread 讲结构，coreConflict 讲卡点。深度字段不能重复 shortAnswer 的原句或近义句。' : '\n11. 【反重复规则】shortAnswer 给结论，mainThread 讲结构，coreConflict 讲卡点。深度字段不能重复 shortAnswer 的原句或近义句。如果 mainThread 讲了"宜守"，coreConflict 就要讲"为什么会想攻、攻会卡在哪里"。') + (isHealth ? '\n【健康场景规则】卦象只能看状态倾向，不能替代医学判断。禁止说"你没病""不用看医生""一定会好"。riskBoundary 必须包含"如有不适优先以专业检查为准"的提醒。不要做任何诊断。' : '') + (isMoney ? '\n【财运场景规则】禁止承诺收益，禁止说"一定赚钱""稳赚""放心投"。必须包含风险提示或止损建议。actionStrategy 必须提到"先小后大""分批""止损"等风控概念。' : '');
+
+              var systemContent = '你是一位资深的情感与决策顾问。你的任务不是简单地安慰用户，而是像一位经验丰富的老友，点一支烟，倒一杯茶，坐下来陪他一起把这件事从头到尾捋一遍。\n\n你的解读必须是一篇完整、连贯、层层递进的深度剖析，字数必须充足，绝不能偷工减料。你要让用户读完感觉："对，就是这么回事。我终于明白问题出在哪里了。"\n\n请严格遵循以下步骤展开。insight字段总字数必须在650-750字之间，绝对不能少于600字。必须把所有卦理信息（如山泽损、用生体、动爻等）彻底消化，转化成大白话和具体的关系描述。\n\n1. 处境画像（白描）：用2-3句话，非常具体地描绘出用户在这段关系里的真实状态。不是泛泛地说"你很累"，而是说他"总是在等她的消息，心情随着她的回复忽上忽下"。让他觉得你就在旁边看着。（80-100字）\n2. 关系复盘（剖析）：这是最核心的部分，必须写深写透。结合卦象，用大白话解释为什么你们会走到今天这一步。指出他可能自己都没意识到的行为模式。比如，是不是他的过度付出，反而让对方感到了压力？是不是他的步步紧逼，让对方失去了追逐的兴趣？关键：把卦理解释为双方的心理博弈，深入分析双方的动机和感受。至少举一个具体的行为场景来说明。（200-250字）\n3. 推演与转机（指路）：结合卦理趋势，详细展开如果他现在换一种方式，会发生什么。给他一个清晰的、充满希望的图景。要具体到"如果你这样做，对方可能的反应是什么"。让他明白，现在的困境不是死局，而是一个需要他做出改变的信号。（150-200字）\n4. 行动与收官（赋能）：给他2-3个极其具体、可执行到明天的行动建议。每个建议都要具体到"第一步做什么、注意什么、遇到什么情况怎么应对"。最后，用一句非常有洞察力的话收尾，像电影的结尾一样，让他回味，甚至想把它截图下来。（120-150字）\n\n核心规则：\n1. 严禁输出任何易经、卦名、爻辞、五行生克等术语，必须全部转化为精妙的大白话。\n2. 忌AI味的套话，不要写"综上所述"，要像深夜电台一样自然。\n3. 整个insight字段的回答是一篇完整的短文，自然分段，至少4-5段。每段至少3-4句话。\n4. 人称规则：用户是"你"，对方用"她/他/TA"。例如用户问"我和她有可能吗"，你要用"你"称呼用户，用"她"称呼对方。禁止用"他"来称呼用户。\n5. 如果场景是"感情"，必须先判断是恋爱关系还是普通朋友关系——"找我玩""一起出去"通常是朋友关系，"在一起""复合""表白"才是恋爱。\n6. action字段不少于50字，必须具体到可执行的步骤。\n7. warning字段不少于40字，要有实质性的风险分析。\n8. 【最高优先级·反模板规则】你手上有每个卦的专属画像数据（benGuaProfile/bianGuaProfile），你必须从中提取这个卦独有的核心意象，作为你整篇解读的灵魂。不同卦给出的解读必须有本质区别——损卦讲"割舍的痛"，屯卦讲"初期的焦虑"，困卦讲"困守的压抑"，遁卦讲"退避的智慧"。禁止用"调整节奏""给彼此空间""不要太主动"这种放之四海皆准的套话作为核心结论。你的verdict和insight必须让用户一眼就知道"这卦说的就是我"，而不是觉得换了任何一卦都能套上去。\n9. 必须返回严格 JSON，不要输出 Markdown、不要输出代码块、不要输出 ```json 标记。直接输出 JSON 对象。JSON 字符串内不能包含真实换行符，段落之间用\\n分隔。' + (isHealth ? '\n\n【健康场景规则】卦象只能看状态倾向，不能替代医学判断。禁止说"你没病""不用看医生""一定会好"。warning 必须包含"如有不适优先以专业检查为准"的提醒。不要做任何诊断。' : '') + (isMoney ? '\n\n【财运场景规则】禁止承诺收益，禁止说"一定赚钱""稳赚""放心投"。必须包含风险提示或止损建议。action 必须提到"先小后大""分批""止损"等风控概念。' : '');
 
               var sceneTemplate = getDepthTemplate(packet.scenario);
-              var interpersonalWriteGuide = isInterpersonal ? '\n【人际写法】interpersonalArchetype 是本地预判原型，可参考但必须结合卦象展开。重点：互动结构；行为信号；真实位置；轻量试探；继续/收的信号。' : '';
+              var interpersonalWriteGuide = (packet.scenario === "social_invite" || packet.scenario === "interpersonal") ? '\n\n【人际写法】禁止直接断言他人内心，必须基于行为信号判断。不要把普通朋友关系写成暧昧关系。重点：互动结构；行为信号；真实位置；轻量试探；继续/收的信号。' : '';
 
-              var userContent = '用户问题："' + packet.question + '"\n场景：' + packet.scenario + '\n语气：' + packet.toneGuide.tone + '\n重点：' + packet.toneGuide.focus + '\n\n卦象事实：\n' + JSON.stringify(packet.guaFacts, null, 2) + '\n\n本地判断：\n' + JSON.stringify(packet.ruleJudgment, null, 2) + '\n\n内容种子：\n' + JSON.stringify(packet.contentSeeds, null, 2) + '\n\n' + sceneTemplate + interpersonalWriteGuide + '\n\n【免费层边界规则】\nheadline和shortAnswer是免费展示的，只给方向不给具体行动方案。\nriskBoundary只给一句轻提醒，不给详细风险清单。\nmainThread/actionStrategy等深度字段才给完整推理和具体步骤。\n\n返回JSON：\n{\n  "headline": "总判断(8-16字)",\n  "shortAnswer": "当前局势方向(15-35字，只给方向不给具体行动)",\n  "mainThread": "深推主线(180-260字)",\n  "coreConflict": "关键矛盾(120-180字)",\n  "guaLogic": "卦象拆解(160-240字)",\n  "realWorldMapping": "现实落点(140-220字)",\n  "verificationSigns": "验证信号(100-160字)",\n  "actionStrategy": "行动策略(120-180字)",\n  "riskBoundary": "一句轻提醒(15-30字，只说方向不给详细风险)",\n  "finalWord": "一语定局(8-18字)",\n  "freeVersion": {"sceneTag":"场景标签","boundaryHint":"边界提示"}\n}';
+              var userContent = '用户问题："' + packet.question + '"\n场景：' + packet.scenario + '\n\n卦象事实：\n' + JSON.stringify(packet.guaFacts, null, 2) + '\n\n【本卦专属画像·必须深度使用】\n' + JSON.stringify(packet.benGuaProfile, null, 2) + '\n\n【变卦走向画像】\n' + JSON.stringify(packet.bianGuaProfile, null, 2) + (packet.huGuaProfile ? '\n\n【互卦暗线】\n' + JSON.stringify(packet.huGuaProfile, null, 2) : '') + '\n\n本地判断：\n' + JSON.stringify(packet.ruleJudgment, null, 2) + '\n\n' + sceneTemplate + interpersonalWriteGuide + '\n\n返回JSON：\n{\n  "verdict": "一句简短有力的核心结论，不超过20字。不要安慰，要真相。",\n  "insight": "你的完整长文回答，总计650-750字，绝对不少于600字，自然分段，不带任何序号。",\n  "action": "一条具体可落地的行动建议，不少于50字",\n  "warning": "一条风险提示，不少于40字",\n  "summary": "一句有洞察力的话，适合截图分享。"\n}';
 
               var workerURL = "https://bitter-scene-172b.w2286971650.workers.dev";
 
@@ -10834,8 +10902,10 @@
                 var apiResp = null;
                 try { apiResp = JSON.parse(rawText); } catch(e) {}
                 var aiReply = (apiResp && apiResp.choices && apiResp.choices[0] && apiResp.choices[0].message && apiResp.choices[0].message.content) ? apiResp.choices[0].message.content.trim() : rawText;
+                console.log('[AI DEBUG] aiReply 前500字:', aiReply.slice(0, 500));
                 var parsed = parseAiJson(aiReply);
                 if (!parsed) {
+                  console.error('[AI DEBUG] JSON解析失败，原始内容:', aiReply);
                   var fallback = fallbackMarkerParse(aiReply);
                   if (fallback) { debugLog('[AI] JSON解析失败，标记解析回退成功'); return fallback; }
                   throw new Error("AI response is not valid JSON");
@@ -10853,80 +10923,78 @@
               };
             }
 
-            // ========== AI 深度解读开始 ==========
+            // ========== AI 深度解读：先异步发起，不阻塞主屏 ==========
             var workerURL = "https://bitter-scene-172b.w2286971650.workers.dev";
 
-            window._aiReasoning = { aiEnhanced: false, aiStatus: 'loading' };
-            window._aiVerdict = null;
-            window._aiFailed = false;
-            window._lastInterpretation = interpretation;
-            renderResult(interpretation, result);
-            _isDeriving = false;
-            setTimeout(function(){
-              try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0, 0); }
-            }, 100);
-
             var packet = buildJudgmentPacket(result, interpretation, question, interpretation.meta.scenarioKey || 'general');
-            debugLog('[AI] 发起请求');
+            debugLog('[AI] 提前发起请求');
+            var _historyId = null;
 
-            interpretation.aiStatus = AI_STATUS.LOADING;
-
-            requestAiInterpretation(packet).then(function(parsed) {
+            var aiPromise = requestAiInterpretation(packet).then(function(parsed) {
+              console.log('[AI DEBUG] parsed 对象:', JSON.stringify(parsed).slice(0, 500));
               parsed = patchMissingAiRecommendedFields(parsed);
-              if (!validateAiInterpretation(parsed)) {
+              console.log('[AI DEBUG] patch后 parsed:', JSON.stringify(parsed).slice(0, 500));
+              var isValid = validateAiInterpretation(parsed);
+              console.log('[AI DEBUG] validateAiInterpretation:', isValid);
+              if (!isValid) {
+                console.log('[AI DEBUG] 验证失败，缺失字段:', AI_REQUIRED_FIELDS.filter(function(f) { return typeof parsed[f] !== "string" || parsed[f].trim().length === 0; }));
+              }
+              if (!isValid) {
                 var fb = applyAiFallback(interpretation, "AI 返回内容不完整");
-                window._aiReasoning = fb;
-                window._aiFailed = true;
-                interpretation.aiStatus = AI_STATUS.INVALID;
-              } else if (detectAiConflict(interpretation, parsed)) {
+                return fb;
+              }
+              if (detectAiConflict(interpretation, parsed)) {
                 var fb2 = applyAiFallback(interpretation, "AI 解读与本地卦象判断冲突");
-                window._aiReasoning = fb2;
-                window._aiFailed = true;
-                interpretation.aiStatus = AI_STATUS.FALLBACK;
-              } else {
-                var merged = mergeRuleAndAiInterpretation(interpretation, parsed);
-                sanitizeInterpersonalAi(merged, packet.scenario);
-                sanitizeMoneyAi(merged, packet.scenario);
-                sanitizeHealthAi(merged, packet.scenario);
-                merged.aiStatus = AI_STATUS.SUCCESS;
-                window._aiReasoning = merged;
-                interpretation.meta.verdict = (merged.headline || '').slice(0, 25);
-                interpretation.meta.bullets = [
-                  (merged.shortAnswer || '').slice(0, 40),
-                  (merged.verificationSigns || '').slice(0, 40),
-                  (merged.riskBoundary || '').slice(0, 40)
-                ];
-                if (parsed.freeVersion) {
-                  if (parsed.freeVersion.sceneTag) interpretation.meta.scenarioLabel = parsed.freeVersion.sceneTag.slice(0, 6);
-                  if (parsed.freeVersion.boundaryHint) interpretation.meta.boundaryHint = parsed.freeVersion.boundaryHint.slice(0, 50);
-                }
-                debugLog('[AI] AI解读成功:', merged.headline);
+                return fb2;
               }
-              currentShareText = buildShareText(interpretation);
-              if (_historyId) updateHistoryItem(_historyId, interpretation);
-              var reasoningEl = document.getElementById('reasoningContent');
-              if (reasoningEl && window._aiReasoning && (window._aiReasoning.aiEnhanced || window._aiReasoning.guaExplanation || window._aiReasoning.aiFallbackReason)) {
-                var oldSection = reasoningEl.querySelector('.gua-reasoning-section');
-                var newSection = renderGuaReasoning(interpretation, result, window._aiReasoning);
-                if (newSection) {
-                  if (oldSection) oldSection.replaceWith(newSection);
-                  else reasoningEl.appendChild(newSection);
-                }
-              }
-              setTimeout(scrollToResult, 150);
+              var merged = mergeRuleAndAiInterpretation(interpretation, parsed);
+              sanitizeInterpersonalAi(merged, packet.scenario);
+              sanitizeMoneyAi(merged, packet.scenario);
+              sanitizeHealthAi(merged, packet.scenario);
+              merged.aiStatus = AI_STATUS.SUCCESS;
+              return merged;
             }).catch(function(err) {
               var reason = err.name === 'AbortError' ? "AI 解读超时" : "AI 解读请求失败";
               console.warn('[AI] 请求失败:', err.name, err.message);
-              showToast(reason + '，已展示本地结果');
-              window._aiReasoning = applyAiFallback(interpretation, reason);
-              window._aiFailed = true;
-              interpretation.aiStatus = err.name === 'AbortError' ? AI_STATUS.TIMEOUT : AI_STATUS.ERROR;
-              if (_historyId) updateHistoryItem(_historyId, interpretation);
+              console.error('[AI DEBUG] 完整错误对象:', err);
+              return applyAiFallback(interpretation, reason);
             });
-            // ========== AI 深度解读结束 ==========
 
-            // 保存到历史记录（先存本地结果占位，AI完成后会更新）
-            var _historyId = saveToHistory(interpretation);
+            aiPromise.then(function(aiResult) {
+              _isDeriving = false;
+              hideLoading(timer);
+              window._aiReasoning = aiResult || applyAiFallback(interpretation, "AI 解读请求失败");
+              window._aiFailed = !!(aiResult && (aiResult.aiFallbackReason || aiResult.aiConflict));
+              window._aiVerdict = null;
+              window._lastInterpretation = interpretation;
+              if (aiResult && !aiResult.aiFallbackReason && !aiResult.aiConflict) {
+                interpretation.meta.verdict = (aiResult.headline || '').slice(0, 25);
+                interpretation.meta.bullets = [
+                  (aiResult.shortAnswer || '').slice(0, 40),
+                  (aiResult.verificationSigns || '').slice(0, 40),
+                  (aiResult.riskBoundary || '').slice(0, 40)
+                ];
+              }
+              currentShareText = buildShareText(interpretation);
+              var isFirstRender = !document.getElementById('reasoningContent');
+              renderResult(interpretation, result);
+              if (isFirstRender) _historyId = saveToHistory(interpretation);
+              else if (_historyId) updateHistoryItem(_historyId, interpretation);
+              setTimeout(function(){
+                try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) { window.scrollTo(0, 0); }
+              }, 80);
+            }).catch(function(){
+              hideLoading(timer);
+              window._aiReasoning = applyAiFallback(interpretation, "渲染深度解读失败");
+              window._aiFailed = true;
+              var isFirstRender = !document.getElementById('reasoningContent');
+              renderResult(interpretation, result);
+              if (isFirstRender) _historyId = saveToHistory(interpretation);
+              else if (_historyId) updateHistoryItem(_historyId, interpretation);
+              _isDeriving = false;
+            });
+            // ========== AI 深度解读：已提前发起 ==========
+
             // 自动解锁图鉴
             var guaName = result.benGuaName;
             if (guaName) {
